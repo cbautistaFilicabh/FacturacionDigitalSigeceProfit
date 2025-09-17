@@ -52,28 +52,28 @@ namespace FacturacionDigital_SIGECE.Forms
             }
         }
 
-        private void createFactura()
-        {
-            var data = JsonSerializer.Deserialize<FacturasRequestDto>(txtInput.Text);
+        //private void createFactura()
+        //{
+        //    var data = JsonSerializer.Deserialize<FacturasRequestDto>(txtInput.Text);
 
-            var _facturaService = new FacturasService();
+        //    var _facturaService = new FacturasService();
 
-            var result = _facturaService.CreateAsync(data);
+        //    var result = _facturaService.CreateAsync(data);
 
-            if (result != null)
-            {
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                var jsonString = JsonSerializer.Serialize(result, options);
-                salida.Text = jsonString;
-                MessageHelper.ShowSuccess("Factura creada exitosamente.");
-            }
+        //    if (result != null)
+        //    {
+        //        var options = new JsonSerializerOptions { WriteIndented = true };
+        //        var jsonString = JsonSerializer.Serialize(result, options);
+        //        salida.Text = jsonString;
+        //        MessageHelper.ShowSuccess("Factura creada exitosamente.");
+        //    }
 
 
-        }
+        //}
 
         private void send_Click(object sender, EventArgs e)
         {
-            createFactura();
+            //createFactura();
         }
     }
 }

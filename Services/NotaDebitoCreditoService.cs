@@ -10,7 +10,7 @@ namespace FacturacionDigital_SIGECE.Services
         {
         }
 
-        public async Task<NotaDebitoCreditoResponseDto?> CreateAsync(NotaDebitoCreditoRequestDto dto)
+        public async Task<NotaDebitoCreditoResponseDto?> CreateAsync(List<NotaDebitoCreditoRequestDto> dto)
         {
             var url = "facturas/notas/masivanotas";
             return await PostAsync<NotaDebitoCreditoResponseDto>(url, dto);

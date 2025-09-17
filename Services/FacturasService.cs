@@ -10,7 +10,7 @@ namespace FacturacionDigital_SIGECE.Services
         {
         }
 
-        public async Task<FacturasResponseDto?> CreateAsync(FacturasRequestDto dto)
+        public async Task<FacturasResponseDto?> CreateAsync(List<FacturasRequestDto> dto)
         {
             var url = "facturas/masivafacturacion";
             return await PostAsync<FacturasResponseDto>(url, dto);
