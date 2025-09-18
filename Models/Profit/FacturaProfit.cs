@@ -21,9 +21,7 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public string? Serie { get; set; }                        // dbo.sfExtraerText(rtrim(f.doc_num))
         public string? Sucursal { get; set; }                     // 'PPAL'
         public string? TipoDeVenta { get; set; }                  // 'INTERNA'
-        public string? CoTran { get; set; }                       // T.co_tran
-        public string? DesTran { get; set; }                      // T.des_tran
-
+       
 
         //datos del cliente
         public string? CoCli { get; set; }                        // f.co_cli
@@ -32,26 +30,30 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public string? Rif { get; set; }                          // c.rif
         public string? TipoIdentificacion { get; set; }           // left(c.rif,1)
         public string? NumeroIdentificacion { get; set; }         // substring(c.rif,2,len(c.rif))
-        public string? Direc1 { get; set; }                       // c.direc1
-        public string? Email { get; set; }                        // c.email
-        public string? Telefonos { get; set; }                    // c.telefonos
+        public string? DireccionComercial { get; set; }                       
+        public string? DireccionEntrega { get; set; }                       
+        public string? Email { get; set; } 
+        public string? Telefonos { get; set; }
 
         // Comentarios / campos libres
-        public string? ComentarioGeneral { get; set; }            // replace(convert(...), '<Forma de pago: Efectivo>', '')
-        public string? Campo1 { get; set; }                       // f.campo1
-        public string? Campo2 { get; set; }                       // f.campo2
-        public string? Campo3 { get; set; }                       // f.campo3
-        public string? Campo4 { get; set; }                       // f.campo4
-        public string? Campo5 { get; set; }                       // f.campo5
-        public string? Campo6 { get; set; }                       // f.campo6 (aparece dos veces en el SELECT)
-        public string? Campo8 { get; set; }                       // f.campo8
-        public string? Descrip { get; set; }                      // f.descrip
+        public string? ComentarioGeneral { get; set; }
+        public string? InfoAdicional1 { get; set; }
+        public string? InfoAdicional2 { get; set; }
+        public string? InfoAdicional3 { get; set; }
+        public string? InfoAdicional4 { get; set; }
+        public string? InfoAdicional5 { get; set; }
+        public string? InfoAdicional6 { get; set; }
+        public string? InfoAdicional7 { get; set; }
+        public string? InfoAdicional8 { get; set; }
+        public string? Descripcion { get; set; }
 
         // Vendedor / condición pago
         public string? CoVen { get; set; }                        // f.co_ven
         public string? VenDes { get; set; }                       // v.ven_des
         public string? CoCond { get; set; }                       // con.co_cond
         public string? CondDes { get; set; }                      // con.cond_des
+        public string? CoTran { get; set; }                       // T.co_tran
+        public string? DesTran { get; set; }                      // T.des_tran
 
 
         // Descuentos / recargos / totales doc
@@ -72,7 +74,7 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public string? NumeroPlanillaImportacion { get; set; }
         public string? NumeroExpedienteImportacion { get; set; }
 
-        //Datos que se usan para notas de credito y debito
+        //Datos que se usan para notas de credito y debito 
         public string? SerieFacturaAfectada { get; set; }
         public string? NumeroFacturaAfectada { get; set; }
         public DateTime? FechaFacturaAfectada { get; set; }
@@ -84,46 +86,73 @@ namespace FacturacionDigital_SIGECE.Models.Profit
 
     public class DetalleFacturaProfit
     {
-        public int Linea { get; set; }
-        public string CodigoArticulo { get; set; }
-        public string DescripcionArticulo { get; set; }
+        // public DetalleFacturaProfit( ) => Recalcular();
 
-        public decimal Cantidad { get; set; }
-        public decimal PrecioUnitario { get; set; }
 
         // Unidad de medida
         public int? UnidadDeMedida { get; set; }            // NUEVO (mapper usa cUniMed)
         public string DescripcionUnidadDeMedida { get; set; }                  // NUEVO (mapper usa dDesUniMed)
-
+      
         public decimal Factor { get; set; } = 1m;
 
-        // Impuesto
-        public int TasaIva { get; set; }                    // 0/5/10 (mapper lo toma)
-        public decimal IvaMonto { get; set; }               // NUEVO (mapper dLiqIVAItem)
-        public decimal BaseImponible { get; set; }          // NUEVO (mapper dBasGravIVA / dBasExe)
+        public decimal IvaMontoRenglon
+        {
+            get => _IvaMontoRenglon;
+            set { _IvaMontoRenglon = value; Recalcular(); }
+        }
+        public decimal BaseImponibleRenglon { get; set ; }
+        public decimal ExentoRenglon { get; set; }
 
-        // Subtotales por línea
-        public decimal SubtotalBruto { get; set; }
         public decimal Subtotal { get; set; }               // NUEVO (mapper usa Subtotal)
-        public decimal Descuento { get; set; }
-        public decimal PorcDescuento { get; set; }
-        public decimal TotalLinea { get; set; }
 
-        // Otros
-        public string ComentarioLinea { get; set; }
-        public string Almacen { get; set; }
-
-        public decimal Iva
+        // Si deseas permitir monto de descuento fijo, también disparo recalcular
+        private decimal _descuento;
+        public decimal MontoDescuento
         {
-            get => IvaMonto;
-            set => IvaMonto = value;
+            get => _descuento;
+            set { _descuento = value; Recalcular(); }
+        }
+ 
+      
+        private decimal _porcDescuento;
+        public decimal PorcDescuento
+        {
+            get => _porcDescuento;
+            set { _porcDescuento = value; Recalcular(); }
+        }
+        public decimal TotalRenglon { get; set; }
+        public string? ComentarioRenglon { get; set; }
+
+
+        //   Decimales de cálculo (ajústalo a 2 o 5 según tu modelo)
+        private const int DEC = 2;
+        private static decimal R(decimal v, int d = DEC) => Math.Round(v, d, MidpointRounding.AwayFromZero);
+
+
+
+    
+        public void Recalcular(int decimales = DEC)
+        {
+            // 1) Subtotal
+            Subtotal = R(_cantidad * _precioUnitario, decimales);
+
+            
+            // 2) Base/Exento según IVA
+            if (_tasaIva > 0m)
+            {
+                BaseImponibleRenglon = R(Subtotal, decimales);
+                ExentoRenglon = 0m;
+            }
+            else
+            {
+                BaseImponibleRenglon = 0m;
+                ExentoRenglon = R(Subtotal, decimales);
+            }
+
+            
+            // 3) Total
+            TotalRenglon = R(Subtotal + IvaMontoRenglon, decimales);
         }
 
-        // Si en algún lado usan 'PorcentajeIva', lo enlazamos con TasaIva
-        public int PorcentajeIva
-        {
-            get => TasaIva;
-            set => TasaIva = value;
-        }
     }
 }
