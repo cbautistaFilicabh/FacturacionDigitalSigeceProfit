@@ -11,18 +11,19 @@ namespace FacturacionDigital_SIGECE.Services.Common
 {
     public class DocumentosService
     {
-        public void CreateDocument(string typeDocument, object data)
+        public void CreateDocument(string typeDocument, string data)
         {
             switch (typeDocument.ToLowerInvariant())
             {
                 case "factura":
                     var _facturaService = new FacturasService();
-                    _facturaService.CreateAsync((List<FacturasRequestDto>)data);
+                    var listData = DeserializeJsonToList<FacturasRequestDto>(data);
+                    _facturaService.CreateAsync(listData);
                     break;
                 case "nota_credito":
                 case "nota_debito":
                     var _notaDebitoCreditoService = new NotaDebitoCreditoService();
-                    _notaDebitoCreditoService.CreateAsync((List<NotaDebitoCreditoRequestDto>)data);
+                    //_notaDebitoCreditoService.CreateAsync((List<NotaDebitoCreditoRequestDto>)data);
                     break;
                 default:
                     throw new ArgumentException("Tipo de documento no soportado.");

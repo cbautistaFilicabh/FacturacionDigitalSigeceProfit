@@ -6,8 +6,8 @@ namespace FacturacionDigital_SIGECE.Models.Profit
     // Clase principal que agrupa encabezado y detalles
     public class FacturaProfit
     {
-        public EncabezadoDocumentoProfit Encabezado { get; set; } = new EncabezadoDocumentoProfit();
-        public List<DetalleDocumentoProfit> Detalles { get; set; } = new List<DetalleDocumentoProfit>();
+        public EncabezadoFacturaProfit Encabezado { get; set; } = new EncabezadoFacturaProfit();
+        public List<DetalleFacturaProfit> Detalles { get; set; } = new List<DetalleFacturaProfit>();
     }
 
     public class EncabezadoFacturaProfit
@@ -94,7 +94,7 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         // Unidad de medida
         public int? UnidadDeMedida { get; set; }            // NUEVO (mapper usa cUniMed)
         public string DescripcionUnidadDeMedida { get; set; }                  // NUEVO (mapper usa dDesUniMed)
-      
+
         public decimal Factor { get; set; } = 1m;
 
         // Impuesto
