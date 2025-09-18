@@ -21,7 +21,7 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public string? Serie { get; set; }                        // dbo.sfExtraerText(rtrim(f.doc_num))
         public string? Sucursal { get; set; }                     // 'PPAL'
         public string? TipoDeVenta { get; set; }                  // 'INTERNA'
-       
+
 
         //datos del cliente
         public string? CoCli { get; set; }                        // f.co_cli
@@ -30,9 +30,9 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public string? Rif { get; set; }                          // c.rif
         public string? TipoIdentificacion { get; set; }           // left(c.rif,1)
         public string? NumeroIdentificacion { get; set; }         // substring(c.rif,2,len(c.rif))
-        public string? DireccionComercial { get; set; }                       
-        public string? DireccionEntrega { get; set; }                       
-        public string? Email { get; set; } 
+        public string? DireccionComercial { get; set; }
+        public string? DireccionEntrega { get; set; }
+        public string? Email { get; set; }
         public string? Telefonos { get; set; }
 
         // Comentarios / campos libres
@@ -89,18 +89,49 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         // public DetalleFacturaProfit( ) => Recalcular();
 
 
-        // Unidad de medida
-        public int? UnidadDeMedida { get; set; }            // NUEVO (mapper usa cUniMed)
-        public string DescripcionUnidadDeMedida { get; set; }                  // NUEVO (mapper usa dDesUniMed)
-      
-        public decimal Factor { get; set; } = 1m;
+        // Identificación artículo
+        public int? NroRenglon { get; set; }
+        public string? CodigoArticulo { get; set; }
+        public string? DescripcionArticulo { get; set; }
+
+        // ====== Entradas que disparan Recalcular ======
+        private decimal _cantidad;
+        public decimal Cantidad
+        {
+            get => _cantidad;
+            set { _cantidad = value; Recalcular(); }
+        }
+
+        private decimal _precioUnitario;
+        public decimal PrecioUnitario
+        {
+            get => _precioUnitario;
+            set { _precioUnitario = value; Recalcular(); }
+        }
+
+        // Unidad de medida - almacen 
+        public string? UnidadDeMedida { get; set; }
+        public string? DescripcionUnidadDeMedida { get; set; }
+
+        public string? Almacen { get; set; }
+
+        // Impuesto renglon // Subtotales por línea
+
+        private decimal _tasaIva;
+        public decimal PorcIvaRenglon
+        {
+            get => _tasaIva;
+            set { _tasaIva = value; Recalcular(); }
+        }
+
+        public decimal _IvaMontoRenglon { get; set; }
 
         public decimal IvaMontoRenglon
         {
             get => _IvaMontoRenglon;
             set { _IvaMontoRenglon = value; Recalcular(); }
         }
-        public decimal BaseImponibleRenglon { get; set ; }
+        public decimal BaseImponibleRenglon { get; set; }
         public decimal ExentoRenglon { get; set; }
 
         public decimal Subtotal { get; set; }               // NUEVO (mapper usa Subtotal)
@@ -112,8 +143,8 @@ namespace FacturacionDigital_SIGECE.Models.Profit
             get => _descuento;
             set { _descuento = value; Recalcular(); }
         }
- 
-      
+
+
         private decimal _porcDescuento;
         public decimal PorcDescuento
         {
@@ -130,13 +161,13 @@ namespace FacturacionDigital_SIGECE.Models.Profit
 
 
 
-    
+
         public void Recalcular(int decimales = DEC)
         {
             // 1) Subtotal
             Subtotal = R(_cantidad * _precioUnitario, decimales);
 
-            
+
             // 2) Base/Exento según IVA
             if (_tasaIva > 0m)
             {
@@ -149,7 +180,7 @@ namespace FacturacionDigital_SIGECE.Models.Profit
                 ExentoRenglon = R(Subtotal, decimales);
             }
 
-            
+
             // 3) Total
             TotalRenglon = R(Subtotal + IvaMontoRenglon, decimales);
         }

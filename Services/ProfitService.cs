@@ -149,9 +149,6 @@ namespace FacturacionDigital_SIGECE.Services
                                 Subtotal = SafeGetHelper.SafeGet(rd, "Subtotal", 0m),
                                 ComentarioRenglon = SafeGetHelper.SafeGet(rd, "ComentarioRenglon", ""),
                                 PrecioUnitario = SafeGetHelper.SafeGet(rd, "PrecioUnitario", 0m),
-
-
-
                             };
                             doc.Detalles.Add(det);
 

@@ -27,40 +27,9 @@ namespace FacturacionDigital_SIGECE.Forms
 
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            LogIn();
-        }
-
-        private async void LogIn()
-        {
-            if (String.IsNullOrEmpty(AppConfig.SessionToken))
-            {
-                var request = new LoginRequestDto
-                {
-                    email = AppConfig.Email,
-                    password = AppConfig.Password
-                };
-
-                var result = await _authService.LoginAsync(request);
-
-                if (result.Success && result.Data != null)
-                {
-                    MessageHelper.ShowSuccess("Inicio de sesión exitoso.");
-                }
-            }
-        }
-
         private void createFactura()
         {
-            DocumentosService _documentosService = new DocumentosService();
-            var data = txtInput.Text;
 
-            _documentosService.CreateDocument("factura", data);
-
-            // No se asigna el resultado porque CreateDocument es void
-            MessageHelper.ShowSuccess("Factura creada exitosamente.");
         }
 
         private void send_Click(object sender, EventArgs e)
