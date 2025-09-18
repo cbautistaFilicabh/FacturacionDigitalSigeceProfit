@@ -6,245 +6,247 @@ namespace FacturacionDigital_SIGECE.Models.Facturas
     {
         [Required]
         [MaxLength(12)]
-        public string Rif { get; set; }
+        public required string rif { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public string NroFactura { get; set; }
+        public required string nroFactura { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal ImporteTotal { get; set; }
+        public required decimal importeTotal { get; set; }
 
         [MaxLength(16)]
-        public string CodigoSucursal { get; set; }
+        public string? codigoSucursal { get; set; }
 
         [MaxLength(2)]
-        public string Serie { get; set; }
+        public string? serie { get; set; }
 
         [MaxLength(2)]
-        public string SerieNrofactura { get; set; }
+        public string? serieNrofactura { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal SubTotal { get; set; }
+        public required decimal subTotal { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal MontoDescuento { get; set; }
+        public required decimal montoDescuento { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal TotalExento { get; set; }
+        public required decimal totalExento { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal TotalExonerado { get; set; }
+        public required decimal totalExonerado { get; set; }
 
         [Required]
         [MaxLength(10)]
-        public string CondicionPago { get; set; }
+        public required string condicionPago { get; set; }
 
         [Required]
         [MaxLength(3)]
-        public string FacturaDivisa { get; set; }
+        public required string facturaDivisa { get; set; }
 
         [Required]
         [MaxLength(15)]
-        public decimal CambioDivisa { get; set; }
+        public required decimal cambioDivisa { get; set; }
 
         [Required]
         [MaxLength(15)]
-        public decimal TipoCambioDiaUsd { get; set; }
+        public required decimal tipoCambioDiaUsd { get; set; }
 
         [Required]
-        public bool TipoColetilla { get; set; }
+        public required bool tipoColetilla { get; set; }
 
         [Required]
         [MaxLength(10)]
-        public string TipoVenta { get; set; }
+        public required string tipoVenta { get; set; }
 
         [MaxLength(9)]
-        public int? DiasCredito { get; set; }
+        public int? diasCredito { get; set; }
 
-        public string FechaVenciFactura { get; set; }
+        [MaxLength(250)]
+        public string? fechaVenciFactura { get; set; }
 
         [MaxLength(10)]
-        public string? EstatusCredito { get; set; }
+        public string? estatusCredito { get; set; }
 
-        public string FechaVencimiento { get; set; }
+        [MaxLength(250)]
+        public string? fechaVencimiento { get; set; }
 
         [Required]
         [MaxLength(10)]
-        public string ModeloFactura { get; set; }
+        public required string modeloFactura { get; set; }
 
         [MaxLength(15)]
-        public string PagueAntes { get; set; }
+        public string? pagueAntes { get; set; }
 
-        public bool CuentaTerceros { get; set; }
+        public bool cuentaTerceros { get; set; }
 
         [Required]
         [MaxLength(12)]
-        public string RifPrestador { get; set; }
+        public required string rifPrestador { get; set; }
 
-        public bool ColetillaIGTF { get; set; }
+        public bool coletillaIGTF { get; set; }
 
         [MaxLength(20)]
-        public string NroContrato { get; set; }
+        public string? nroContrato { get; set; }
 
         [MaxLength(100)]
-        public string Observacion { get; set; }
+        public string? observacion { get; set; }
 
         [MaxLength(100)]
-        public string ObservacionInfo { get; set; }
+        public string? observacionInfo { get; set; }
 
         [Required]
-        public ClienteDto Cliente { get; set; }
+        public required ClienteDto cliente { get; set; }
 
         [Required]
-        public List<DetalleFacturaDto> IstDetallesFacturaGeneral { get; set; }
+        public required List<DetalleFacturaDto> istDetallesFacturaGeneral { get; set; }
 
-        public List<PagoDto> IstPagos { get; set; }
+        public List<PagoDto>? istPagos { get; set; }
 
-        public List<GravamenDto> IstGravamenes { get; set; }
+        public List<GravamenDto>? istGravamenes { get; set; }
     }
 
     public class ClienteDto
     {
         [Required]
-        public bool ContribuyenteEspecial { get; set; }
+        public bool contribuyenteEspecial { get; set; }
 
         [Required]
         [MaxLength(1)]
-        public string TipoDocumento { get; set; }
+        public required string tipoDocumento { get; set; }
 
         [Required]
         [MaxLength(9)]
-        public string NumeroDocumento { get; set; }
+        public required string numeroDocumento { get; set; }
 
         [Required]
         [MaxLength(90)]
-        public string Identificacion { get; set; }
+        public required string identificacion { get; set; }
 
         [Required]
         [MaxLength(200)]
-        public string Direccion { get; set; }
+        public required string direccion { get; set; }
 
         [Required]
         [MaxLength(12)]
-        public string TelefonoMovil { get; set; }
+        public required string telefonoMovil { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string Correo { get; set; }
+        public required string correo { get; set; }
 
         [MaxLength(50)]
-        public string CcCorreo { get; set; } // campo nuevo en JSON
+        public string? ccCorreo { get; set; } // campo nuevo en JSON
 
         [Required]
         [MaxLength(20)]
-        public string TipoPersona { get; set; }
+        public required string tipoPersona { get; set; }
 
         [Required]
         [MaxLength(4)]
-        public string TipoProveedor { get; set; }
+        public required string tipoProveedor { get; set; }
     }
 
     public class DetalleFacturaDto
     {
         [Required]
         [MaxLength(30)]
-        public string CodigoProducto { get; set; }
+        public required string codigoProducto { get; set; }
 
         [Required]
         [MaxLength(250)]
-        public string Descripcion { get; set; }
+        public required string descripcion { get; set; }
 
         [Required]
         [MaxLength(10)]
-        public string UnidadMedida { get; set; }
+        public required string unidadMedida { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal Cantidad { get; set; }
+        public required decimal cantidad { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal Precio { get; set; }
+        public required decimal precio { get; set; }
 
-        public bool Exento { get; set; }
-
-        [Required]
-        public bool Exonerado { get; set; }
+        public bool exento { get; set; }
 
         [Required]
-        [MaxLength(20)]
-        public decimal Importe { get; set; }
+        public required bool exonerado { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal AlicuotaGravamen { get; set; }
+        public required decimal importe { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal MontoGravamen { get; set; }
+        public required decimal alicuotaGravamen { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal MontoDescuento { get; set; }
+        public required decimal montoGravamen { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal Descuento { get; set; }
+        public required decimal montoDescuento { get; set; }
+
+        [Required]
+        [MaxLength(20)]
+        public required decimal descuento { get; set; }
 
         [MaxLength(20)]
-        public string Nrolote { get; set; }
+        public string? nrolote { get; set; }
 
         [MaxLength(250)]
-        public string FechaVenciProducto { get; set; }
+        public string? fechaVenciProducto { get; set; }
     }
 
     public class PagoDto
     {
         [MaxLength(10)]
-        public string ModoPago { get; set; }
+        public string? modoPago { get; set; }
 
         [MaxLength(15)]
-        public string Nro { get; set; }
+        public string? nro { get; set; }
 
         [MaxLength(15)]
-        public decimal Monto { get; set; }
+        public decimal? monto { get; set; }
 
         [MaxLength(10)]
-        public string FechaComprobantePago { get; set; }
+        public string? fechaComprobantePago { get; set; }
 
         [MaxLength(200)]
-        public string Banco { get; set; } // no estaba en JSON de ejemplo, pero sí en tu clase inicial
+        public string? banco { get; set; } // no estaba en JSON de ejemplo, pero sí en tu clase inicial
 
         [MaxLength(3)]
-        public string Divisa { get; set; }
+        public string? divisa { get; set; }
 
         [MaxLength(3)]
-        public decimal TasaDiaDivisa { get; set; }
+        public decimal? tasaDiaDivisa { get; set; }
 
         [MaxLength(15)]
-        public int DiasCredito { get; set; }
+        public int? diasCredito { get; set; }
 
-        public bool Igtf { get; set; } // JSON lo manda como string
+        public bool igtf { get; set; } // JSON lo manda como string
     }
 
     public class GravamenDto
     {
         [Required]
         [MaxLength(20)]
-        public decimal BaseImponible { get; set; }
+        public required decimal baseImponible { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal Alicuota { get; set; }
+        public required decimal alicuota { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public decimal MontoAlicuota { get; set; }
+        public required decimal montoAlicuota { get; set; }
     }
 }
