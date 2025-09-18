@@ -29,34 +29,41 @@ namespace FacturacionDigital_SIGECE.Services
                 cmd.Parameters.AddWithValue("@tipo_doc", tipoDoc);
                 cmd.Parameters.AddWithValue("@desde", Desde);
                 cmd.Parameters.AddWithValue("@hasta", Hasta);
-
+                cmd.CommandTimeout = 120;
                 cn.Open();
 
                 using (var rd = cmd.ExecuteReader(CommandBehavior.CloseConnection))
                 {
-                    // ----------------- Result set 1: Encabezado -----------------
+
                     if (rd.Read())
                     {
-                        doc = new DocumentoDigitalProfit
+
+                        while (rd.Read())
                         {
 
-                            TipoDoc = SafeGetHelper.SafeGet(rd, "TipoDoc", ""),
-                            NroDoc = SafeGetHelper.SafeGet(rd, "NroDoc", ""),
-                            FechaEmision = SafeGetHelper.SafeGet(rd, "FecEmis", DateTime.Now),
-                            Rif = SafeGetHelper.SafeGet(rd, "Rif", ""),
-                            RazonSocial = SafeGetHelper.SafeGet(rd, "RazonSocial", ""),
-                            Moneda = SafeGetHelper.SafeGet(rd, "Moneda", "Bs"),
-                            Tasa = SafeGetHelper.SafeGet(rd, "Tasa", 1m),
-                            MontoBaseImponible = SafeGetHelper.SafeGet(rd, "MontoBaseImponible", 0m),
-                            MontoIva = SafeGetHelper.SafeGet(rd, "MontoIva", 0m),
-                            MontoTotalDocumento = SafeGetHelper.SafeGet(rd, "MontoTotalDocumento", 0m),
-                            Estado = SafeGetHelper.SafeGet(rd, "Estado", ""),
-                            FechaEnvio = SafeGetHelper.SafeGet(rd, "FechaEnvio", DateTime.Now),
+                            doc = new DocumentoDigitalProfit
+                            {
+
+                                TipoDoc = SafeGetHelper.SafeGet(rd, "TipoDoc", ""),
+                                NroDoc = SafeGetHelper.SafeGet(rd, "NroDoc", ""),
+                                FechaEmision = SafeGetHelper.SafeGet(rd, "FechaEmision", DateTime.Now),
+                                Rif = SafeGetHelper.SafeGet(rd, "Rif", ""),
+                                RazonSocial = SafeGetHelper.SafeGet(rd, "RazonSocial", ""),
+                                Moneda = SafeGetHelper.SafeGet(rd, "Moneda", "Bs"),
+                                Tasa = SafeGetHelper.SafeGet(rd, "Tasa", 1m),
+                                MontoBaseImponible = SafeGetHelper.SafeGet(rd, "MontoBaseImponible", 0m),
+                                MontoIva = SafeGetHelper.SafeGet(rd, "MontoIva", 0m),
+                                MontoTotalDocumento = SafeGetHelper.SafeGet(rd, "MontoTotalDocumento", 0m),
+                                Estado = SafeGetHelper.SafeGet(rd, "Estado", ""),
+                                // la fecha de envio puede venir nula, en caso de quiero inicializarla con una fecha por defecto 01/01/2000
+                                FechaEnvio = SafeGetHelper.SafeGet(rd, "FechaEnvio", new DateTime(2000, 1, 1)),
+                                ControlAsignado = SafeGetHelper.SafeGet(rd, "ControlAsignado", ""),
 
 
 
-                        };
-                        documentos.Add(doc);
+                            };
+                            documentos.Add(doc);
+                        }
                     }
 
 
@@ -138,7 +145,6 @@ namespace FacturacionDigital_SIGECE.Services
                                 Almacen = SafeGetHelper.SafeGet(rd, "Almacen", ""),
                                 PorcDescuento = SafeGetHelper.SafeGet(rd, "PorcDescuento", 0m),
                                 MontoDescuento = SafeGetHelper.SafeGet(rd, "MontoDescuento", 0m),
-                                IvaMontoRenglon = SafeGetHelper.SafeGet(rd, "IvaMontoRenglon", 0m),
                                 PorcIvaRenglon = SafeGetHelper.SafeGet(rd, "PorcIvaRenglon", 0m),
                                 Subtotal = SafeGetHelper.SafeGet(rd, "Subtotal", 0m),
                                 ComentarioRenglon = SafeGetHelper.SafeGet(rd, "ComentarioRenglon", ""),

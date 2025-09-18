@@ -15,7 +15,7 @@ namespace FacturacionDigital_SIGECE
             // see https://aka.ms/applicationconfiguration.
 
             ProfitService profitService = new ProfitService();
-            profitService.BuscarDocumentosDigitales(null, DateTime.Now.AddYears(-1), DateTime.Now);
+            profitService.BuscarDocumentosDigitales(null, new DateTime(2024, 3, 1), DateTime.Now);
             profitService.BuscarFacturaDigital("1753");
 
             ApplicationConfiguration.Initialize();

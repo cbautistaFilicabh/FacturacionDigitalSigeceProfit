@@ -21,6 +21,8 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public string Estado { get; set; }  // Estado del documento (Ej. "Enviado", "Pendiente", etc.)
         public DateTime FechaEnvio { get; set; }  // Fecha de envío del documento
 
+        public string ControlAsignado { get; set; }
+
 
 
 
