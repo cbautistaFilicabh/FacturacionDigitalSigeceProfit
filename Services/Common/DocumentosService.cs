@@ -81,11 +81,11 @@ namespace FacturacionDigital_SIGECE.Services.Common
                                 precio = detalle.PrecioUnitario,
                                 exento = detalle.PorcIvaRenglon == 0 ? true : false,
                                 exonerado = detalle.exonerado, //falta
-                                importe = detalle.IvaMontoRenglon,
+                                importe = detalle.PorcIvaRenglon == 0 ? detalle.ExentoRenglon : detalle.BaseImponibleRenglon,
                                 alicuotaGravamen = detalle.PorcIvaRenglon,
                                 montoGravamen = detalle.IvaMontoRenglon,
                                 montoDescuento = detalle.MontoDescuento,
-                                descuento = detalle.MontoDescuento,
+                                descuento = detalle.PorcDescuento,
                                 nrolote = detalle.nrolote, ///falta
                                 fechaVenciProducto = detalle.fechaVenciProducto.HasValue ? detalle.fechaVenciProducto.Value.ToString("yyyy-MM-dd") : null
                             }
@@ -164,13 +164,13 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         result.Add(new GravamenDto
                         {
                             alicuota = item.alicuotaGravamen,
-                            baseImponible = item.precio,
+                            baseImponible = item.importe,
                             montoAlicuota = item.montoGravamen
                         });
                     }
                     else
                     {
-                        existente.baseImponible += item.precio;
+                        existente.baseImponible += item.importe;
                         existente.montoAlicuota += item.montoGravamen;
                     }
                 }

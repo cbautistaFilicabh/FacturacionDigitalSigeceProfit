@@ -156,7 +156,7 @@ namespace FacturacionDigital_SIGECE.Services
                             BaseIgtf = SafeGetHelper.SafeGet(rd, "BaseIgtf", 0m),
                             Igtf = SafeGetHelper.SafeGet(rd, "Igtf", 0m),
                             TotalGeneral = SafeGetHelper.SafeGet(rd, "TotalGeneral", 0m),
-                            SubTotal = SafeGetHelper.SafeGet(rd, "SubTotal", 0m),
+                            SubTotal = SafeGetHelper.SafeGet(rd, "SubTotalGeneral", 0m),
                             TotalExonerado = SafeGetHelper.SafeGet(rd, "TotalExonerado", 0m),
                             Tasa = SafeGetHelper.SafeGet(rd, "Tasa", 1m),
                             CoMone = SafeGetHelper.SafeGet(rd, "CoMone", "Bs"),
