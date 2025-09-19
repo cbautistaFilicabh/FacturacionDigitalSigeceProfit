@@ -23,7 +23,7 @@ namespace FacturacionDigital_SIGECE
             LogIn();
             ProfitService profitService = new ProfitService();
             profitService.BuscarDocumentosDigitales(null, new DateTime(2024, 3, 1), DateTime.Now);
-            var doc = profitService.BuscarFacturaDigital("1753");
+            var doc = profitService.BuscarFacturaDigital("1762");
 
             DocumentosService documentos = new DocumentosService();
             documentos.CreateDocument("factura", [doc]);

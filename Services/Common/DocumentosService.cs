@@ -53,16 +53,16 @@ namespace FacturacionDigital_SIGECE.Services.Common
                     //Datos del cliente
                     var client = new ClienteDto
                     {
-                        contribuyenteEspecial = false,
+                        contribuyenteEspecial = false, //falta
                         tipoDocumento = (item.Encabezado.TipoIdentificacion ?? "V").Trim(),
                         numeroDocumento = (item.Encabezado.NumeroIdentificacion ?? "").Trim(),
-                        identificacion = "Nombre",
+                        identificacion = item.Encabezado.CliDes != null ? item.Encabezado.CliDes.Trim() : "S/N",
                         direccion = (item.Encabezado.DireccionComercial ?? "").Trim(),
                         telefonoMovil = (item.Encabezado.Telefonos ?? "").Trim(),
                         correo = (item.Encabezado.Email ?? "").Trim(),
-                        ccCorreo = null,
-                        tipoPersona = "CLIENTE",
-                        tipoProveedor = "PJD"
+                        ccCorreo = item.Encabezado.ccCorreo != null ? item.Encabezado.ccCorreo.Trim() : "", 
+                        tipoPersona = "CLIENTE", 
+                        tipoProveedor = item.Encabezado.tipoPersona != null ? item.Encabezado.tipoPersona.Trim() : "PJD"
                     };
 
                     //Detalles de la factura
@@ -74,49 +74,49 @@ namespace FacturacionDigital_SIGECE.Services.Common
                             {
                                 codigoProducto = (detalle.CodigoArticulo ?? "").Trim(),
                                 descripcion = (detalle.DescripcionArticulo ?? "").Trim(),
-                                unidadMedida = "UNIDAD", //(detalle.UnidadDeMedida ?? "").Trim(),
+                                unidadMedida = detalle.DescripcionUnidadDeMedida ?? "UNIDAD",
                                 cantidad = 1,
                                 precio = detalle.PrecioUnitario,
-                                exento = false,
-                                exonerado = false,
+                                exento = detalle.PorcIvaRenglon == 0 ?  true : false, 
+                                exonerado = detalle.exonerado, //falta
                                 importe = detalle.TotalRenglon,
                                 alicuotaGravamen = detalle.PorcIvaRenglon,
                                 montoGravamen = detalle.IvaMontoRenglon,
                                 montoDescuento = detalle.MontoDescuento,
                                 descuento = detalle.PorcDescuento,
-                                nrolote = null,
-                                fechaVenciProducto = null
+                                nrolote = detalle.nrolote, ///falta
+                                fechaVenciProducto = detalle.fechaVenciProducto.ToString()  // convierto en formato DD/MM/YYYY
                             }
                         );
                     }
 
                     facturaDto = new FacturasRequestDto
                     {
-                        rif = "J-411691283",//(item.Encabezado.Rif ?? "").Trim(),
+                        rif = (item.Encabezado.RifEmisor ?? "").Trim(),  
                         nroFactura = (item.Encabezado.NroDoc ?? "").Trim(),
                         importeTotal = item.Encabezado.TotalGeneral ?? 0,
                         codigoSucursal = string.IsNullOrWhiteSpace(item.Encabezado.Sucursal) ? null : item.Encabezado.Sucursal.Trim(),
                         serie = string.IsNullOrWhiteSpace(item.Encabezado.Serie) ? null : item.Encabezado.Serie.Trim(),
                         serieNrofactura = string.IsNullOrWhiteSpace(item.Encabezado.Serie) ? null : item.Encabezado.Serie.Trim(),
-                        subTotal = (item.Encabezado.MontoGravadoTotal + item.Encabezado.MontoExentoTotal) ?? 0,
+                        subTotal = (item.Encabezado.SubTotal) ?? 0, 
                         montoDescuento = item.Encabezado.MontoDescGlob ?? 0,
                         totalExento = item.Encabezado.MontoExentoTotal ?? 0,
-                        totalExonerado = 0,
+                        totalExonerado = item.Encabezado.TotalExonerado, 
                         condicionPago = (item.Encabezado.CoCond ?? "CONTADO").Trim(),
                         facturaDivisa = (item.Encabezado.CoMone ?? "").Trim(),
                         cambioDivisa = 1,
                         tipoCambioDiaUsd = item.Encabezado.Tasa ?? 0,
-                        tipoColetilla = false,
+                        tipoColetilla = item.Encabezado.TipoColetilla, //falta
                         tipoVenta = (item.Encabezado.TipoDeVenta ?? "").ToUpper().Trim(),
-                        diasCredito = null,
+                        diasCredito = item.Encabezado.DiasCredito,
                         fechaVenciFactura = item.Encabezado.FecVenc != null ? item.Encabezado.FecVenc.Value.ToShortDateString().Trim() : null,
                         estatusCredito = null,
                         fechaVencimiento = item.Encabezado.FecVenc != null ? item.Encabezado.FecVenc.Value.ToShortDateString().Trim() : null,
-                        modeloFactura = "GENERAL",
+                        modeloFactura = "GENERAL", ///falta
                         pagueAntes = null,
                         cuentaTerceros = false,
                         rifPrestador = (item.Encabezado.Rif ?? "").Trim(),
-                        coletillaIGTF = true,
+                        coletillaIGTF = item.Encabezado.ColetillaIGTF,
                         nroContrato = "",
                         observacion = item.Encabezado.ComentarioGeneral != null ? item.Encabezado.ComentarioGeneral.Trim() : null,
                         observacionInfo = item.Encabezado.Descripcion != null ? item.Encabezado.Descripcion.Trim() : null,
