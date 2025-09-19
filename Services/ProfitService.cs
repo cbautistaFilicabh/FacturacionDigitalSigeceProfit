@@ -29,7 +29,7 @@ namespace FacturacionDigital_SIGECE.Services
                 cmd.Parameters.AddWithValue("@tipo_doc", tipoDoc);
                 cmd.Parameters.AddWithValue("@desde", Desde);
                 cmd.Parameters.AddWithValue("@hasta", Hasta);
-                cmd.CommandTimeout = 120;
+                cmd.CommandTimeout = 30000;
                 cn.Open();
 
                 using (var rd = cmd.ExecuteReader(CommandBehavior.CloseConnection))
@@ -58,6 +58,7 @@ namespace FacturacionDigital_SIGECE.Services
                                 // la fecha de envio puede venir nula, en caso de quiero inicializarla con una fecha por defecto 01/01/2000
                                 FechaEnvio = SafeGetHelper.SafeGet(rd, "FechaEnvio", new DateTime(2000, 1, 1)),
                                 ControlAsignado = SafeGetHelper.SafeGet(rd, "ControlAsignado", ""),
+
 
 
 
@@ -97,39 +98,97 @@ namespace FacturacionDigital_SIGECE.Services
                     {
                         doc.Encabezado = new EncabezadoFacturaProfit
                         {
-                            TipoDoc = SafeGetHelper.SafeGet(rd, "TipoDoc", ""),
-                            NroDoc = SafeGetHelper.SafeGet(rd, "NroDoc", ""),
+                            TipoDoc = SafeGetHelper.SafeGet(rd, "TipoDoc", "").Trim(),
+                            NroDoc = SafeGetHelper.SafeGet(rd, "NroDoc", "").Trim(),
                             FecEmis = SafeGetHelper.SafeGet(rd, "FecEmis", DateTime.Now),
                             FecVenc = SafeGetHelper.SafeGet(rd, "FecVenc", DateTime.Now),
-                            Serie = SafeGetHelper.SafeGet(rd, "Serie", ""),
-                            Sucursal = SafeGetHelper.SafeGet(rd, "Sucursal", ""),
-                            TipoDeVenta = SafeGetHelper.SafeGet(rd, "TipoDeVenta", ""),
+                            Serie = SafeGetHelper.SafeGet(rd, "Serie", "").Trim(),
+                            Sucursal = SafeGetHelper.SafeGet(rd, "Sucursal", "").Trim(),
+                            TipoDeVenta = SafeGetHelper.SafeGet(rd, "TipoDeVenta", "").Trim(),
                             //datos del cliente
-                            CoCli = SafeGetHelper.SafeGet(rd, "CoCli", ""),
-                            CliDes = SafeGetHelper.SafeGet(rd, "CliDes", ""),
-                            CoPais = SafeGetHelper.SafeGet(rd, "CoPais", ""),
-                            Rif = SafeGetHelper.SafeGet(rd, "Rif", ""),
-                            TipoIdentificacion = SafeGetHelper.SafeGet(rd, "TipoIdentificacion", ""),
-                            NumeroIdentificacion = SafeGetHelper.SafeGet(rd, "NumeroIdentificacion", ""),
-                            DireccionComercial = SafeGetHelper.SafeGet(rd, "DireccionComercial", ""),
-                            DireccionEntrega = SafeGetHelper.SafeGet(rd, "DireccionEntrega", ""),
-                            Email = SafeGetHelper.SafeGet(rd, "Email", ""),
-                            Telefonos = SafeGetHelper.SafeGet(rd, "Telefonos", ""),
+                            CoCli = SafeGetHelper.SafeGet(rd, "CoCli", "").Trim(),
+                            CliDes = SafeGetHelper.SafeGet(rd, "CliDes", "").Trim(),
+                            CoPais = SafeGetHelper.SafeGet(rd, "CoPais", "").Trim(),
+                            Rif = SafeGetHelper.SafeGet(rd, "Rif", "").Trim(),
+                            DireccionEntrega = SafeGetHelper.SafeGet(rd, "DireccionEntrega", "").Trim(),
+                            DireccionComercial = SafeGetHelper.SafeGet(rd, "DireccionComercial", "").Trim(),
+                            TipoIdentificacion = SafeGetHelper.SafeGet(rd, "TipoIdentificacion", "").Trim(),
+                            NumeroIdentificacion = SafeGetHelper.SafeGet(rd, "NumeroIdentificacion", "").Trim(),
+                            
+                            Email = SafeGetHelper.SafeGet(rd, "Email", "").Trim(),
+                            Telefonos = SafeGetHelper.SafeGet(rd, "Telefonos", "").Trim(),
                             // Comentarios / campos libres
-                            ComentarioGeneral = SafeGetHelper.SafeGet(rd, "ComentarioGeneral", ""),
-                            InfoAdicional1 = SafeGetHelper.SafeGet(rd, "InfoAdicional1", ""),
-                            InfoAdicional2 = SafeGetHelper.SafeGet(rd, "InfoAdicional2", ""),
-                            InfoAdicional3 = SafeGetHelper.SafeGet(rd, "InfoAdicional3", ""),
-                            InfoAdicional4 = SafeGetHelper.SafeGet(rd, "InfoAdicional4", ""),
-                            InfoAdicional5 = SafeGetHelper.SafeGet(rd, "InfoAdicional5", ""),
-                            InfoAdicional6 = SafeGetHelper.SafeGet(rd, "InfoAdicional6", ""),
-                            InfoAdicional7 = SafeGetHelper.SafeGet(rd, "InfoAdicional7", ""),
-                            InfoAdicional8 = SafeGetHelper.SafeGet(rd, "InfoAdicional8", ""),
-                            Descripcion = SafeGetHelper.SafeGet(rd, "Descripcion", ""),
+                            ComentarioGeneral = SafeGetHelper.SafeGet(rd, "ComentarioGeneral", "").Trim(),
+                            InfoAdicional1 = SafeGetHelper.SafeGet(rd, "InfoAdicional1", "").Trim(),
+                            InfoAdicional2 = SafeGetHelper.SafeGet(rd, "InfoAdicional2", "").Trim(),
+                            InfoAdicional3 = SafeGetHelper.SafeGet(rd, "InfoAdicional3", "").Trim(),
+                            InfoAdicional4 = SafeGetHelper.SafeGet(rd, "InfoAdicional4", "").Trim(),
+                            InfoAdicional5 = SafeGetHelper.SafeGet(rd, "InfoAdicional5", "").Trim(),
+                            InfoAdicional6 = SafeGetHelper.SafeGet(rd, "InfoAdicional6", "").Trim(),
+                            InfoAdicional7 = SafeGetHelper.SafeGet(rd, "InfoAdicional7", "").Trim(),
+                            InfoAdicional8 = SafeGetHelper.SafeGet(rd, "InfoAdicional8", "").Trim(),
+                            Descripcion = SafeGetHelper.SafeGet(rd, "Descripcion", "").Trim(),
+                            TipoColetilla = SafeGetHelper.SafeGet(rd, "TipoColetilla", false),
+                            ColetillaIGTF = SafeGetHelper.SafeGet(rd, "ColetillaIGTF", false),
+                            contribuyenteEspecial = SafeGetHelper.SafeGet(rd, "contribuyenteEspecial", false),
+                            tipoPersona = SafeGetHelper.SafeGet(rd, "tipoPersona", "").Trim(),
+                            // Vendedor / condición pago
+                            CoVen = SafeGetHelper.SafeGet(rd, "CoVen", "").Trim(),
+                            VenDes = SafeGetHelper.SafeGet(rd, "VenDes", "").Trim(),
+                            CoCond = SafeGetHelper.SafeGet(rd, "CoCond", "").Trim(),
+                            CondDes = SafeGetHelper.SafeGet(rd, "CondDes", "").Trim(),
+                            RifEmisor = SafeGetHelper.SafeGet(rd, "RifEmisor", "").Trim(),
+                            DiasCredito = SafeGetHelper.SafeGet(rd, "DiasCredito", 0)   ,
+                            CoTran = SafeGetHelper.SafeGet(rd, "CoTran", "").Trim(),
+                            DesTran = SafeGetHelper.SafeGet(rd, "DesTran", "").Trim(),
+                            ccCorreo = SafeGetHelper.SafeGet(rd, "ccCorreo", "").Trim(),
 
+
+                          
+                            PorcGdesc = SafeGetHelper.SafeGet(rd, "PorcGdesc", 0m),
+                            MontoDescGlob = SafeGetHelper.SafeGet(rd, "MontoDescGlob", 0m),
+                            PorcIva = SafeGetHelper.SafeGet(rd, "PorcIva", 0m),
+                            MontoImp = SafeGetHelper.SafeGet(rd, "MontoImp", 0m),
+                            MontoGravadoTotal = SafeGetHelper.SafeGet(rd, "MontoGravadoTotal", 0m),
+                            MontoExentoTotal = SafeGetHelper.SafeGet(rd, "MontoExentoTotal", 0m),
+                            Anulado = SafeGetHelper.SafeGet(rd, "Anulado", false),
+
+                            BaseIgtf = SafeGetHelper.SafeGet(rd, "BaseIgtf", 0m),
+                            Igtf = SafeGetHelper.SafeGet(rd, "Igtf", 0m),
+                            TotalGeneral = SafeGetHelper.SafeGet(rd, "TotalGeneral", 0m),
+                            SubTotal = SafeGetHelper.SafeGet(rd, "SubTotal", 0m),
+                            TotalExonerado = SafeGetHelper.SafeGet(rd, "TotalExonerado", 0m),
+                            Tasa = SafeGetHelper.SafeGet(rd, "Tasa", 1m),
+                            CoMone = SafeGetHelper.SafeGet(rd, "CoMone", "Bs"),
+                            CoSucuIn = SafeGetHelper.SafeGet(rd, "CoSucuIn", ""),
+                            NumeroPlanillaImportacion = SafeGetHelper.SafeGet(rd, "NumeroPlanillaImportacion", "").Trim(),
+                            NumeroExpedienteImportacion = SafeGetHelper.SafeGet(rd, "NumeroExpedienteImportacion", "").Trim(),
+                            SerieFacturaAfectada = SafeGetHelper.SafeGet(rd, "SerieFacturaAfectada", "").Trim(),
+                            NumeroFacturaAfectada = SafeGetHelper.SafeGet(rd, "NumeroFacturaAfectada", "").Trim(),
+                            FechaFacturaAfectada = SafeGetHelper.SafeGet(rd, "FechaFacturaAfectada", (DateTime?)null),
+                            MontoFacturaAfectada = SafeGetHelper.SafeGet(rd, "MontoFacturaAfectada", 0m),
+                            ComentarioFacturaAfectada = SafeGetHelper.SafeGet(rd, "ComentarioFacturaAfectada", "").Trim(),
 
 
                         };
+                            var det1 = new DetalleFacturaProfit
+                            {
+                                //inicualizo los atributos de DetalleFacturaProfit
+                                NroRenglon = SafeGetHelper.SafeGet(rd, "NroRenglon", 0),
+                                CodigoArticulo = SafeGetHelper.SafeGet(rd, "CodigoArticulo", "").Trim(),
+                                DescripcionArticulo = SafeGetHelper.SafeGet(rd, "DescripcionArticulo", "").Trim(),
+                                Cantidad = SafeGetHelper.SafeGet(rd, "Cantidad", 0m),
+                                UnidadDeMedida = SafeGetHelper.SafeGet(rd, "UnidadDeMedida", "").Trim(),
+                                DescripcionUnidadDeMedida = SafeGetHelper.SafeGet(rd, "DescripcionUnidadDeMedida", "").Trim(),
+                                Almacen = SafeGetHelper.SafeGet(rd, "Almacen", "").Trim(),
+                                MontoDescuento = SafeGetHelper.SafeGet(rd, "MontoDescuento", 0m),
+                                Subtotal = SafeGetHelper.SafeGet(rd, "Subtotal", 0m),
+                                ComentarioRenglon = SafeGetHelper.SafeGet(rd, "ComentarioRenglon", "").Trim(),
+                                PrecioUnitario = SafeGetHelper.SafeGet(rd, "PrecioUnitario", 0m),
+                                PorcIvaRenglon = SafeGetHelper.SafeGet(rd, "PorcIvaRenglon", 0m),
+                                PorcDescuento = SafeGetHelper.SafeGet(rd, "PorcDescuento", 0m),
+                            };
+                            doc.Detalles.Add(det1);
 
                         while (rd.Read())
                         {
@@ -137,18 +196,18 @@ namespace FacturacionDigital_SIGECE.Services
                             {
                                 //inicualizo los atributos de DetalleFacturaProfit
                                 NroRenglon = SafeGetHelper.SafeGet(rd, "NroRenglon", 0),
-                                CodigoArticulo = SafeGetHelper.SafeGet(rd, "CodigoArticulo", ""),
-                                DescripcionArticulo = SafeGetHelper.SafeGet(rd, "DescripcionArticulo", ""),
+                                CodigoArticulo = SafeGetHelper.SafeGet(rd, "CodigoArticulo", "").Trim(),
+                                DescripcionArticulo = SafeGetHelper.SafeGet(rd, "DescripcionArticulo", "").Trim(),
                                 Cantidad = SafeGetHelper.SafeGet(rd, "Cantidad", 0m),
-                                UnidadDeMedida = SafeGetHelper.SafeGet(rd, "UnidadDeMedida", ""),
-                                DescripcionUnidadDeMedida = SafeGetHelper.SafeGet(rd, "DescripcionUnidadDeMedida", ""),
-                                Almacen = SafeGetHelper.SafeGet(rd, "Almacen", ""),
-                                PorcDescuento = SafeGetHelper.SafeGet(rd, "PorcDescuento", 0m),
+                                UnidadDeMedida = SafeGetHelper.SafeGet(rd, "UnidadDeMedida", "").Trim(),
+                                DescripcionUnidadDeMedida = SafeGetHelper.SafeGet(rd, "DescripcionUnidadDeMedida", "").Trim(),
+                                Almacen = SafeGetHelper.SafeGet(rd, "Almacen", "").Trim(),
                                 MontoDescuento = SafeGetHelper.SafeGet(rd, "MontoDescuento", 0m),
-                                PorcIvaRenglon = SafeGetHelper.SafeGet(rd, "PorcIvaRenglon", 0m),
                                 Subtotal = SafeGetHelper.SafeGet(rd, "Subtotal", 0m),
-                                ComentarioRenglon = SafeGetHelper.SafeGet(rd, "ComentarioRenglon", ""),
+                                ComentarioRenglon = SafeGetHelper.SafeGet(rd, "ComentarioRenglon", "").Trim(),
                                 PrecioUnitario = SafeGetHelper.SafeGet(rd, "PrecioUnitario", 0m),
+                                PorcIvaRenglon = SafeGetHelper.SafeGet(rd, "PorcIvaRenglon", 0m),
+                                PorcDescuento = SafeGetHelper.SafeGet(rd, "PorcDescuento", 0m),
                             };
                             doc.Detalles.Add(det);
 
