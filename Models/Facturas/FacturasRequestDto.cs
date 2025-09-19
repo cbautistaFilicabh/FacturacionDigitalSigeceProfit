@@ -106,9 +106,9 @@ namespace FacturacionDigital_SIGECE.Models.Facturas
         [Required]
         public required List<DetalleFacturaDto> istDetallesFacturaGeneral { get; set; }
 
-        public List<PagoDto>? istPagos { get; set; }
+        public List<PagoDto>? lstPagos { get; set; }
 
-        public List<GravamenDto>? istGravamenes { get; set; }
+        public List<GravamenDto>? lstGravamenes { get; set; }
     }
 
     public class ClienteDto

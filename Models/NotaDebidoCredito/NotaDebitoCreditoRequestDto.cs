@@ -65,7 +65,7 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
         public required List<DetalleNota> IstDetallesNota { get; set; }
 
         [Required]
-        public required List<GravamenNota>? IstGravamenes { get; set; }
+        public required List<GravamenDto>? IstGravamenes { get; set; }
     }
 
     public class DetalleNota
@@ -122,20 +122,5 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
         [Required]
         [MaxLength(20)]
         public required decimal MontoDescuento { get; set; }
-    }
-
-    public class GravamenNota
-    {
-        [Required]
-        [MaxLength(20)]
-        public decimal BaseImponible { get; set; }
-
-        [Required]
-        [MaxLength(20)]
-        public decimal Alicuota { get; set; }
-
-        [Required]
-        [MaxLength(20)]
-        public decimal MontoAlicuota { get; set; }
     }
 }

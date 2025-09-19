@@ -90,6 +90,8 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         );
                     }
 
+                    var lstGravamen = GravamenList(detalleFac);
+
                     facturaDto = new FacturasRequestDto
                     {
                         rif = "J-411691283",//(item.Encabezado.Rif ?? "").Trim(),
@@ -105,7 +107,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         condicionPago = (item.Encabezado.CoCond ?? "CONTADO").Trim(),
                         facturaDivisa = (item.Encabezado.CoMone ?? "").Trim(),
                         cambioDivisa = 1,
-                        tipoCambioDiaUsd = item.Encabezado.Tasa ?? 0,
+                        tipoCambioDiaUsd = 165.41m, // item.Encabezado.Tasa ?? 0,
                         tipoColetilla = false,
                         tipoVenta = (item.Encabezado.TipoDeVenta ?? "").ToUpper().Trim(),
                         diasCredito = null,
@@ -117,13 +119,13 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         cuentaTerceros = false,
                         rifPrestador = (item.Encabezado.Rif ?? "").Trim(),
                         coletillaIGTF = true,
-                        nroContrato = "",
+                        nroContrato = "1234567",
                         observacion = item.Encabezado.ComentarioGeneral != null ? item.Encabezado.ComentarioGeneral.Trim() : null,
                         observacionInfo = item.Encabezado.Descripcion != null ? item.Encabezado.Descripcion.Trim() : null,
                         cliente = client,
                         istDetallesFacturaGeneral = detalleFac,
-                        istPagos = null,
-                        istGravamenes = null
+                        lstPagos = null,
+                        lstGravamenes = lstGravamen
                     };
 
                     newDto.Add((T)(object)facturaDto);
@@ -137,5 +139,46 @@ namespace FacturacionDigital_SIGECE.Services.Common
             return newDto;
         }
 
+        public static List<GravamenDto> GravamenList(List<DetalleFacturaDto> productsList)
+        {
+            try
+            {
+                if (productsList == null || productsList.Count == 0)
+                    return new List<GravamenDto>();
+
+                var alicuotasValidas = new int[] { 16, 8, 31 };
+                var result = new List<GravamenDto>();
+
+                foreach (var item in productsList)
+                {
+                    if (item.exento || !alicuotasValidas.Contains(Convert.ToInt32(item.alicuotaGravamen)))
+                        continue;
+
+                    // Buscar si ya existe un registro con esa alícuota
+                    var existente = result.FirstOrDefault(x => x.alicuota == item.alicuotaGravamen);
+
+                    if (existente == null)
+                    {
+                        result.Add(new GravamenDto
+                        {
+                            alicuota = item.alicuotaGravamen,
+                            baseImponible = item.precio,
+                            montoAlicuota = item.montoGravamen
+                        });
+                    }
+                    else
+                    {
+                        existente.baseImponible += item.precio;
+                        existente.montoAlicuota += item.montoGravamen;
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Ocurrió un error al generar la lista de gravámenes.", ex);
+            }
+        }
     }
 }
