@@ -30,7 +30,8 @@ namespace FacturacionDigital_SIGECE.Services.Common
 
         protected async Task<T?> PostAsync<T>(string endpoint, object data)
         {
-            var jsonContent = JsonConvert.SerializeObject(data);
+            //var jsonContent = JsonConvert.SerializeObject(data);
+            var jsonContent = JsonConvert.SerializeObject(data, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(endpoint, content);

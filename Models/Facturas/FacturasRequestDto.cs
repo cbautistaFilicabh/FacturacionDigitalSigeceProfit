@@ -104,7 +104,7 @@ namespace FacturacionDigital_SIGECE.Models.Facturas
         public required ClienteDto cliente { get; set; }
 
         [Required]
-        public required List<DetalleFacturaDto> istDetallesFacturaGeneral { get; set; }
+        public required List<DetalleFacturaDto> lstDetallesFacturaGeneral { get; set; }
 
         public List<PagoDto>? lstPagos { get; set; }
 
@@ -235,18 +235,4 @@ namespace FacturacionDigital_SIGECE.Models.Facturas
         public bool igtf { get; set; } // JSON lo manda como string
     }
 
-    public class GravamenDto
-    {
-        [Required]
-        [MaxLength(20)]
-        public required decimal baseImponible { get; set; }
-
-        [Required]
-        [MaxLength(20)]
-        public required decimal alicuota { get; set; }
-
-        [Required]
-        [MaxLength(20)]
-        public required decimal montoAlicuota { get; set; }
-    }
 }

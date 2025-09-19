@@ -35,7 +35,7 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public string? Email { get; set; }
         public string? ccCorreo { get; set; }
         public string? Telefonos { get; set; }
-        public bool? contribuyenteEspecial { get; set; } 
+        public bool? contribuyenteEspecial { get; set; }
         public string? tipoPersona { get; set; }
 
 
@@ -74,11 +74,11 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public decimal? MontoExentoTotal { get; set; }            // decimal(18,2)
         public bool? Anulado { get; set; }                        // f.anulado (bit)
         public decimal? BaseIgtf { get; set; }                    // 0.000000000
-        
+
         public decimal? Igtf { get; set; }                        // 0.000000000
-       
+
         public decimal? TotalGeneral { get; set; }                // f.total_neto + 0
-      
+
         public decimal? SubTotal { get; set; }                // f.total_neto + 0
 
         public decimal TotalExonerado { get; set; }               // decimal(18,2)
@@ -109,9 +109,9 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public string? CodigoArticulo { get; set; }
         public string? DescripcionArticulo { get; set; }
 
-       
+
         public decimal Cantidad { get; set; }
-        
+
         public decimal PrecioUnitario { get; set; }
 
         // Unidad de medida - almacen 
@@ -129,14 +129,14 @@ namespace FacturacionDigital_SIGECE.Models.Profit
             set { _tasaIva = value; Recalcular(); }
         }
 
-       
+
         public decimal IvaMontoRenglon { get; set; }
         public decimal BaseImponibleRenglon { get; set; }
         public decimal ExentoRenglon { get; set; }
         public string? nrolote { get; set; }
 
         public bool exonerado { get; set; } = false;
-        public DateTime? fechaVenciProducto { get; set; } 
+        public DateTime? fechaVenciProducto { get; set; }
 
         public decimal Subtotal { get; set; }               // NUEVO (mapper usa Subtotal)
 
@@ -158,7 +158,7 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public void Recalcular(int decimales = DEC)
         {
 
-             
+
 
             // 2) Base/Exento según IVA
             if (_tasaIva > 0m)
@@ -172,7 +172,8 @@ namespace FacturacionDigital_SIGECE.Models.Profit
                 ExentoRenglon = R(Subtotal, decimales);
             }
 
-            IvaMontoRenglon = R(BaseImponibleRenglon  * (PorcIvaRenglon / 100m), decimales);
+            IvaMontoRenglon = R(BaseImponibleRenglon * (PorcIvaRenglon / 100m), decimales);
+            //IvaMontoRenglon = R((Cantidad * PrecioUnitario - MontoDescuento) * (PorcIvaRenglon / 100m), decimales);
 
 
             // 3) Total
