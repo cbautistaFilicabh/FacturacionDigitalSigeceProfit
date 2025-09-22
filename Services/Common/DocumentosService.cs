@@ -19,13 +19,13 @@ namespace FacturacionDigital_SIGECE.Services.Common
             //var json = DeserializeJsonToList<FacturaProfit>(data);
             switch (typeDocument.ToLowerInvariant())
             {
-                case "factura":
+                case "fact":
                     var _facturaService = new FacturasService();
                     var listData = MapAdminToApi<FacturasRequestDto>(data) ?? new List<FacturasRequestDto>();
                     _facturaService.CreateAsync(listData);
                     break;
-                case "nota_credito":
-                case "nota_debito":
+                case "n/cr":
+                case "n/db":
                     var _notaDebitoCreditoService = new NotaDebitoCreditoService();
                     //_notaDebitoCreditoService.CreateAsync((List<NotaDebitoCreditoRequestDto>)data);
                     break;

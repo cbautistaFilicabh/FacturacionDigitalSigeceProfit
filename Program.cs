@@ -20,15 +20,8 @@ namespace FacturacionDigital_SIGECE
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
-            LogIn();
-            ProfitService profitService = new ProfitService();
-            profitService.BuscarDocumentosDigitales(null, new DateTime(2024, 3, 1), DateTime.Now);
-            var doc = profitService.BuscarFacturaDigital("1762");
-
-            DocumentosService documentos = new DocumentosService();
-            documentos.CreateDocument("factura", [doc]);
-
             ApplicationConfiguration.Initialize();
+            LogIn();
             Application.Run(new Main());
         }
 
@@ -43,13 +36,8 @@ namespace FacturacionDigital_SIGECE
                 };
 
                 var resultTask = _authService.LoginAsync(request);
-                resultTask.Wait(); // Esperar a que la tarea termine
+                resultTask.Wait();
                 var result = resultTask.Result;
-
-                if (result.Success && result.Data != null)
-                {
-                    MessageHelper.ShowSuccess("Inicio de sesión exitoso.");
-                }
             }
         }
     }
