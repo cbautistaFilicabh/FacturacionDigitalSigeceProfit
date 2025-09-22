@@ -1,4 +1,5 @@
-﻿using FacturacionDigital_SIGECE.Models;
+﻿using Azure;
+using FacturacionDigital_SIGECE.Models;
 using FacturacionDigital_SIGECE.Models.Facturas;
 using FacturacionDigital_SIGECE.Models.NotaDebidoCredito;
 using FacturacionDigital_SIGECE.Models.Profit;
@@ -14,23 +15,58 @@ namespace FacturacionDigital_SIGECE.Services.Common
 {
     public class DocumentosService
     {
-        public void CreateDocument(string typeDocument, List<FacturaProfit> data)
+        public async Task CreateDocumentAsync(string typeDocument, List<FacturaProfit> data)
         {
-            //var json = DeserializeJsonToList<FacturaProfit>(data);
             switch (typeDocument.ToLowerInvariant())
             {
                 case "fact":
                     var _facturaService = new FacturasService();
                     var listData = MapAdminToApi<FacturasRequestDto>(data) ?? new List<FacturasRequestDto>();
-                    _facturaService.CreateAsync(listData);
+
+                    var response = await _facturaService.CreateAsync(listData);
+
+                    if (response.Success && response.Data != null)
+                    {
+                        var msg = new StringBuilder();
+
+                        if (response.Data.DetalleFacturaProcesadas?.Any() == true)
+                        {
+                            msg.AppendLine(" Facturas procesadas correctamente:");
+                            foreach (var proc in response.Data.DetalleFacturaProcesadas)
+                                msg.AppendLine($" • {proc.NroFactura} ({proc.Cliente}) -> {proc.Msg}");
+                        }
+
+                        if (response.Data.DetalleErrorFacturas?.Any() == true)
+                        {
+                            msg.AppendLine();
+                            msg.AppendLine($" Facturas no procesadas:");
+                            foreach (var err in response.Data.DetalleErrorFacturas)
+                            {
+                                msg.AppendLine($"{err.NroFactura}");
+                            }
+                            //msg.AppendLine($"Cantidad de errores encontrados: {response.Data.DetalleErrorFacturas.Count}");
+                            msg.AppendLine("Revisar el historico para más información");
+                        }
+
+                        // Mostrar mensaje al usuario
+                        MessageBox.Show(msg.ToString(), "Resultado Facturación", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Error al crear facturas: {response.Message}",
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                     break;
+            }
+            break;
                 case "n/cr":
-                case "n/db":
-                    var _notaDebitoCreditoService = new NotaDebitoCreditoService();
-                    //_notaDebitoCreditoService.CreateAsync((List<NotaDebitoCreditoRequestDto>)data);
-                    break;
-                default:
-                    throw new ArgumentException("Tipo de documento no soportado.");
+            case "n/db":
+                var _notaDebitoCreditoService = new NotaDebitoCreditoService();
+                //_notaDebitoCreditoService.CreateAsync((List<NotaDebitoCreditoRequestDto>)data);
+                break;
+            default:
+                throw new ArgumentException("Tipo de documento no soportado.");
             }
         }
 

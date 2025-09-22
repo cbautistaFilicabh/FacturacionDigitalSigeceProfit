@@ -85,5 +85,15 @@ namespace FacturacionDigital_SIGECE.Forms
         {
             lblTitle.MinimumSize = new Size(topbar.DisplayRectangle.Width, 0);
         }
+
+        private void dateStart_ValueChanged(object sender, EventArgs e)
+        {
+            SearchDocuments();
+        }
+
+        private void dateEnd_ValueChanged(object sender, EventArgs e)
+        {
+            SearchDocuments();
+        }
     }
 }

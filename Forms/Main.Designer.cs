@@ -104,12 +104,12 @@
             dgvDocs.HeaderBackColor = Color.DodgerBlue;
             dgvDocs.HeaderBgColor = Color.Empty;
             dgvDocs.HeaderForeColor = Color.White;
-            dgvDocs.Location = new Point(8, 109);
+            dgvDocs.Location = new Point(16, 117);
             dgvDocs.Name = "dgvDocs";
             dgvDocs.RowHeadersVisible = false;
             dgvDocs.RowTemplate.Height = 40;
             dgvDocs.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDocs.Size = new Size(923, 416);
+            dgvDocs.Size = new Size(907, 400);
             dgvDocs.TabIndex = 0;
             dgvDocs.Theme = Bunifu.UI.WinForms.BunifuDataGridView.PresetThemes.Light;
             // 
@@ -124,11 +124,11 @@
             topbar.Controls.Add(dateEnd);
             topbar.Controls.Add(btnSend);
             topbar.Dock = DockStyle.Top;
-            topbar.Location = new Point(8, 8);
+            topbar.Location = new Point(16, 16);
             topbar.Margin = new Padding(0);
             topbar.Name = "topbar";
             topbar.Padding = new Padding(4);
-            topbar.Size = new Size(923, 101);
+            topbar.Size = new Size(907, 101);
             topbar.TabIndex = 1;
             // 
             // lblTitle
@@ -298,6 +298,7 @@
             dateStart.Size = new Size(134, 38);
             dateStart.TabIndex = 2;
             dateStart.Value = new DateTime(2000, 1, 1, 0, 0, 0, 0);
+            dateStart.ValueChanged += dateStart_ValueChanged;
             // 
             // dateEnd
             // 
@@ -326,6 +327,7 @@
             dateEnd.Name = "dateEnd";
             dateEnd.Size = new Size(134, 38);
             dateEnd.TabIndex = 3;
+            dateEnd.ValueChanged += dateEnd_ValueChanged;
             // 
             // btnSend
             // 
@@ -428,8 +430,9 @@
             Controls.Add(dgvDocs);
             Controls.Add(topbar);
             Name = "Main";
-            Padding = new Padding(8);
-            Text = "Main";
+            Padding = new Padding(16);
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Facturación Digital - SIGECE";
             Resize += Main_Resize;
             ((System.ComponentModel.ISupportInitialize)dgvDocs).EndInit();
             topbar.ResumeLayout(false);
