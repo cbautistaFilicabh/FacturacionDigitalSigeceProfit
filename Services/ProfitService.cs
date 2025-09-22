@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FacturacionDigital_SIGECE.AppUtilities;
 using FacturacionDigital_SIGECE.Helpers;
+using FacturacionDigital_SIGECE.Models.Facturas;
 using FacturacionDigital_SIGECE.Models.Profit;
 using Microsoft.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 
 namespace FacturacionDigital_SIGECE.Services
@@ -114,7 +117,7 @@ namespace FacturacionDigital_SIGECE.Services
                             DireccionComercial = SafeGetHelper.SafeGet(rd, "DireccionComercial", "").Trim(),
                             TipoIdentificacion = SafeGetHelper.SafeGet(rd, "TipoIdentificacion", "").Trim(),
                             NumeroIdentificacion = SafeGetHelper.SafeGet(rd, "NumeroIdentificacion", "").Trim(),
-                            
+
                             Email = SafeGetHelper.SafeGet(rd, "Email", "").Trim(),
                             Telefonos = SafeGetHelper.SafeGet(rd, "Telefonos", "").Trim(),
                             // Comentarios / campos libres
@@ -138,13 +141,13 @@ namespace FacturacionDigital_SIGECE.Services
                             CoCond = SafeGetHelper.SafeGet(rd, "CoCond", "").Trim(),
                             CondDes = SafeGetHelper.SafeGet(rd, "CondDes", "").Trim(),
                             RifEmisor = SafeGetHelper.SafeGet(rd, "RifEmisor", "").Trim(),
-                            DiasCredito = SafeGetHelper.SafeGet(rd, "DiasCredito", 0)   ,
+                            DiasCredito = SafeGetHelper.SafeGet(rd, "DiasCredito", 0),
                             CoTran = SafeGetHelper.SafeGet(rd, "CoTran", "").Trim(),
                             DesTran = SafeGetHelper.SafeGet(rd, "DesTran", "").Trim(),
                             ccCorreo = SafeGetHelper.SafeGet(rd, "ccCorreo", "").Trim(),
 
 
-                          
+
                             PorcGdesc = SafeGetHelper.SafeGet(rd, "PorcGdesc", 0m),
                             MontoDescGlob = SafeGetHelper.SafeGet(rd, "MontoDescGlob", 0m),
                             PorcIva = SafeGetHelper.SafeGet(rd, "PorcIva", 0m),
@@ -171,24 +174,24 @@ namespace FacturacionDigital_SIGECE.Services
 
 
                         };
-                            var det1 = new DetalleFacturaProfit
-                            {
-                                //inicualizo los atributos de DetalleFacturaProfit
-                                NroRenglon = SafeGetHelper.SafeGet(rd, "NroRenglon", 0),
-                                CodigoArticulo = SafeGetHelper.SafeGet(rd, "CodigoArticulo", "").Trim(),
-                                DescripcionArticulo = SafeGetHelper.SafeGet(rd, "DescripcionArticulo", "").Trim(),
-                                Cantidad = SafeGetHelper.SafeGet(rd, "Cantidad", 0m),
-                                UnidadDeMedida = SafeGetHelper.SafeGet(rd, "UnidadDeMedida", "").Trim(),
-                                DescripcionUnidadDeMedida = SafeGetHelper.SafeGet(rd, "DescripcionUnidadDeMedida", "").Trim(),
-                                Almacen = SafeGetHelper.SafeGet(rd, "Almacen", "").Trim(),
-                                MontoDescuento = SafeGetHelper.SafeGet(rd, "MontoDescuento", 0m),
-                                Subtotal = SafeGetHelper.SafeGet(rd, "Subtotal", 0m),
-                                ComentarioRenglon = SafeGetHelper.SafeGet(rd, "ComentarioRenglon", "").Trim(),
-                                PrecioUnitario = SafeGetHelper.SafeGet(rd, "PrecioUnitario", 0m),
-                                PorcIvaRenglon = SafeGetHelper.SafeGet(rd, "PorcIvaRenglon", 0m),
-                                PorcDescuento = SafeGetHelper.SafeGet(rd, "PorcDescuento", 0m),
-                            };
-                            doc.Detalles.Add(det1);
+                        var det1 = new DetalleFacturaProfit
+                        {
+                            //inicualizo los atributos de DetalleFacturaProfit
+                            NroRenglon = SafeGetHelper.SafeGet(rd, "NroRenglon", 0),
+                            CodigoArticulo = SafeGetHelper.SafeGet(rd, "CodigoArticulo", "").Trim(),
+                            DescripcionArticulo = SafeGetHelper.SafeGet(rd, "DescripcionArticulo", "").Trim(),
+                            Cantidad = SafeGetHelper.SafeGet(rd, "Cantidad", 0m),
+                            UnidadDeMedida = SafeGetHelper.SafeGet(rd, "UnidadDeMedida", "").Trim(),
+                            DescripcionUnidadDeMedida = SafeGetHelper.SafeGet(rd, "DescripcionUnidadDeMedida", "").Trim(),
+                            Almacen = SafeGetHelper.SafeGet(rd, "Almacen", "").Trim(),
+                            MontoDescuento = SafeGetHelper.SafeGet(rd, "MontoDescuento", 0m),
+                            Subtotal = SafeGetHelper.SafeGet(rd, "Subtotal", 0m),
+                            ComentarioRenglon = SafeGetHelper.SafeGet(rd, "ComentarioRenglon", "").Trim(),
+                            PrecioUnitario = SafeGetHelper.SafeGet(rd, "PrecioUnitario", 0m),
+                            PorcIvaRenglon = SafeGetHelper.SafeGet(rd, "PorcIvaRenglon", 0m),
+                            PorcDescuento = SafeGetHelper.SafeGet(rd, "PorcDescuento", 0m),
+                        };
+                        doc.Detalles.Add(det1);
 
                         while (rd.Read())
                         {
@@ -217,6 +220,114 @@ namespace FacturacionDigital_SIGECE.Services
 
                     return doc;
                 }
+            }
+        }
+
+
+        public void RegristrarRespuestaApi(string tipo_doc, string nro_doc, DocumentoResponseDto responseDto)
+        {
+
+            // validar que responseDto no sea nulo y que tenga valor en detalleDocumentoProcesadas
+            if (responseDto == null)
+                return;
+            if (responseDto.detalleDocumentoProcesadas != null || responseDto.detalleDocumentoProcesadas.Count > 0)
+            {
+                // recorrer la lista de detalleDocumentoProcesadas y registrar cada uno en la base de datos
+                foreach (var detalle in responseDto.detalleDocumentoProcesadas)
+                {
+                    var connectionString = AppConfig.CadenaConexion;
+                    using (var cn = new SqlConnection(connectionString))
+                    using (var cmd = new SqlCommand())
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Connection = cn;
+                        cmd.CommandText = "Insert into sfEstadoDocumento (Autorizado, co_tipo_doc, nro_doc, NumeroFacturaAsignado, NumeroControlAsignado, comentarios) " +
+                            "values " +
+                            "(@autorizado, @co_tipo_doc, @nro_doc, @numeroFacturaAsignado, @numeroControlAsignado, @comentarios)";
+
+                        cmd.Parameters.AddWithValue("@autorizado", true);
+                        cmd.Parameters.AddWithValue("@co_tipo_doc", tipo_doc);
+                        cmd.Parameters.AddWithValue("@nro_doc", nro_doc);
+                        cmd.Parameters.AddWithValue("@numeroFacturaAsignado", detalle.NroFactura ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@numeroControlAsignado", detalle.NroControl ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@comentarios", (object)DBNull.Value);
+
+                        cn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            if (responseDto.detalleErrorDocuemnto != null || responseDto.detalleErrorDocuemnto.Count > 0)
+            {
+
+                string errorMsg = string.Join("; ", responseDto.detalleErrorDocuemnto.Select(e => $"Posición {e.posicion}: {e.Msg}"));
+
+
+                var connectionString = AppConfig.CadenaConexion;
+                using (var cn = new SqlConnection(connectionString))
+                using (var cmd = new SqlCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = cn;
+                    cmd.CommandText = "Insert into sfEstadoDocumento (Autorizado, co_tipo_doc, nro_doc, NumeroFacturaAsignado, NumeroControlAsignado, comentarios) " +
+                        "values " +
+                        "(@autorizado, @co_tipo_doc, @nro_doc, @numeroFacturaAsignado, @numeroControlAsignado, @comentarios)";
+                    cmd.Parameters.AddWithValue("@autorizado", false);
+                    cmd.Parameters.AddWithValue("@co_tipo_doc", tipo_doc);
+                    cmd.Parameters.AddWithValue("@nro_doc", nro_doc);
+                    cmd.Parameters.AddWithValue("@numeroFacturaAsignado", (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@numeroControlAsignado", (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@comentarios", errorMsg ?? (object)DBNull.Value);
+                    cn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<EstadoDocumento> ListarEstadoDocumento(string tipo_doc, string nro_doc)
+        {
+
+            List<EstadoDocumento> estados = new List<EstadoDocumento>();
+            //consultar la base de datos y llenar la lista de estados
+            var connectionString = AppConfig.CadenaConexion;
+            using (var cn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand())
+            {
+
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "select * from sfEstadoDocumento where co_tipo_doc = @tipo_doc and nro_doc = @nro_doc";
+                cmd.Parameters.AddWithValue("@tipo_doc", tipo_doc);
+                cmd.Parameters.AddWithValue("@nro_doc", nro_doc);
+                cmd.Connection = cn;
+                cn.Open();
+                cmd.ExecuteNonQuery();
+                using (var rd = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    if (rd.Read())
+                    {
+                        while (rd.Read())
+                        {
+                            var estado = new EstadoDocumento
+                            {
+                                Id = SafeGetHelper.SafeGet(rd, "Id", 0),
+                                Autorizado = SafeGetHelper.SafeGet(rd, "Autorizado", false),
+                                co_tipo_doc = SafeGetHelper.SafeGet(rd, "co_tipo_doc", "").Trim(),
+                                nro_doc = SafeGetHelper.SafeGet(rd, "nro_doc", "").Trim(),
+                                Serie = SafeGetHelper.SafeGet(rd, "Serie", "").Trim(),
+                                NumeroFacturaAsignado = SafeGetHelper.SafeGet(rd, "NumeroFacturaAsignado", "").Trim(),
+                                NumeroControlAsignado = SafeGetHelper.SafeGet(rd, "NumeroControlAsignado", "").Trim(),
+                                Comentarios = SafeGetHelper.SafeGet(rd, "Comentarios", "").Trim(),
+                                FechaAsignacion = SafeGetHelper.SafeGet(rd, "FechaAsignacion", (DateTime?)null),
+                                URLConsulta = SafeGetHelper.SafeGet(rd, "URLConsulta", "").Trim(),
+                            };
+                            estados.Add(estado);
+                        }
+                    }
+                }
+
+
+
+                return estados;
             }
         }
     }
