@@ -15,7 +15,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
 {
     public class DocumentosService
     {
-        public async Task CreateDocumentAsync(string typeDocument, List<FacturaProfit> data)
+        public async Task CreateDocument(string typeDocument, List<FacturaProfit> data)
         {
             switch (typeDocument.ToLowerInvariant())
             {
@@ -31,23 +31,32 @@ namespace FacturacionDigital_SIGECE.Services.Common
 
                         if (response.Data.DetalleFacturaProcesadas?.Any() == true)
                         {
-                            msg.AppendLine(" Facturas procesadas correctamente:");
-                            foreach (var proc in response.Data.DetalleFacturaProcesadas)
-                                msg.AppendLine($" • {proc.NroFactura} ({proc.Cliente}) -> {proc.Msg}");
+                            msg.AppendLine("Facturas procesadas correctamente:");
+
+                            var facturasProcesadas = response.Data.DetalleFacturaProcesadas
+                                .SelectMany(list => list) // aplanar la lista de listas
+                                .ToList();
+
+                            foreach (var proc in facturasProcesadas)
+                            {
+                                msg.AppendLine($" Número:{proc.NroFactura} | N. Control: {proc.NroControl}");
+                            }
+                            msg.AppendLine();
                         }
 
                         if (response.Data.DetalleErrorFacturas?.Any() == true)
                         {
-                            msg.AppendLine();
-                            msg.AppendLine($" Facturas no procesadas:");
-                            foreach (var err in response.Data.DetalleErrorFacturas)
-                            {
-                                msg.AppendLine($"{err.NroFactura}");
-                            }
-                            //msg.AppendLine($"Cantidad de errores encontrados: {response.Data.DetalleErrorFacturas.Count}");
-                            msg.AppendLine("Revisar el historico para más información");
-                        }
 
+                            var facturasError = response.Data.DetalleErrorFacturas.SelectMany(list => list).ToList();
+
+                            var facturasUnicas = facturasError.GroupBy(e => e.NroFactura).Select(g => g.First()).ToList();
+
+                            msg.AppendLine("Facturas no procesadas:" + string.Join(", ", facturasUnicas.Select(e => e.NroFactura)));
+
+                            msg.AppendLine();
+                            msg.AppendLine($"Total de errores: {facturasError.Count}");
+                            msg.AppendLine("Revisa el histórico para más detalles.");
+                        }
                         // Mostrar mensaje al usuario
                         MessageBox.Show(msg.ToString(), "Resultado Facturación", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -58,15 +67,13 @@ namespace FacturacionDigital_SIGECE.Services.Common
                             "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     break;
-            }
-            break;
                 case "n/cr":
-            case "n/db":
-                var _notaDebitoCreditoService = new NotaDebitoCreditoService();
-                //_notaDebitoCreditoService.CreateAsync((List<NotaDebitoCreditoRequestDto>)data);
-                break;
-            default:
-                throw new ArgumentException("Tipo de documento no soportado.");
+                case "n/db":
+                    var _notaDebitoCreditoService = new NotaDebitoCreditoService();
+                    //_notaDebitoCreditoService.CreateAsync((List<NotaDebitoCreditoRequestDto>)data);
+                    break;
+                default:
+                    throw new ArgumentException("Tipo de documento no soportado.");
             }
         }
 

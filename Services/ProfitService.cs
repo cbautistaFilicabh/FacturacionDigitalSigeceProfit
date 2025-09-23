@@ -224,7 +224,7 @@ namespace FacturacionDigital_SIGECE.Services
         }
 
 
-        public void RegristrarRespuestaApi(string tipo_doc, string nro_doc, DocumentoResponseDto responseDto)
+        public void RegistrarRespuestaApi(string tipo_doc, string nro_doc, DocumentoResponseDto responseDto)
         {
 
             // validar que responseDto no sea nulo y que tenga valor en detalleDocumentoProcesadas

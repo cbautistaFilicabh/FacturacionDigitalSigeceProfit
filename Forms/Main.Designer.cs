@@ -104,12 +104,12 @@
             dgvDocs.HeaderBackColor = Color.DodgerBlue;
             dgvDocs.HeaderBgColor = Color.Empty;
             dgvDocs.HeaderForeColor = Color.White;
-            dgvDocs.Location = new Point(16, 117);
+            dgvDocs.Location = new Point(16, 105);
             dgvDocs.Name = "dgvDocs";
             dgvDocs.RowHeadersVisible = false;
             dgvDocs.RowTemplate.Height = 40;
             dgvDocs.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDocs.Size = new Size(907, 400);
+            dgvDocs.Size = new Size(841, 412);
             dgvDocs.TabIndex = 0;
             dgvDocs.Theme = Bunifu.UI.WinForms.BunifuDataGridView.PresetThemes.Light;
             // 
@@ -128,7 +128,7 @@
             topbar.Margin = new Padding(0);
             topbar.Name = "topbar";
             topbar.Padding = new Padding(4);
-            topbar.Size = new Size(907, 101);
+            topbar.Size = new Size(841, 89);
             topbar.TabIndex = 1;
             // 
             // lblTitle
@@ -138,11 +138,12 @@
             lblTitle.AutoEllipsis = false;
             lblTitle.CursorType = Cursors.Default;
             lblTitle.Font = new Font("Segoe UI", 14F);
-            lblTitle.Location = new Point(8, 15);
+            lblTitle.Location = new Point(8, 8);
             lblTitle.Margin = new Padding(4);
+            lblTitle.MinimumSize = new Size(600, 0);
             lblTitle.Name = "lblTitle";
             lblTitle.RightToLeft = RightToLeft.No;
-            lblTitle.Size = new Size(106, 25);
+            lblTitle.Size = new Size(600, 25);
             lblTitle.TabIndex = 5;
             lblTitle.Text = "Documentos";
             lblTitle.TextAlignment = ContentAlignment.TopLeft;
@@ -176,7 +177,7 @@
             txtSearch.IconPadding = 10;
             txtSearch.IconRight = Properties.Resources.search_50_light;
             txtSearch.IconRightCursor = Cursors.IBeam;
-            txtSearch.Location = new Point(122, 8);
+            txtSearch.Location = new Point(8, 41);
             txtSearch.Margin = new Padding(4);
             txtSearch.MaxLength = 32767;
             txtSearch.MinimumSize = new Size(1, 1);
@@ -260,7 +261,7 @@
             cmbTypeDoc.ItemHighLightColor = Color.DodgerBlue;
             cmbTypeDoc.ItemHighLightForeColor = Color.White;
             cmbTypeDoc.ItemTopMargin = 3;
-            cmbTypeDoc.Location = new Point(390, 8);
+            cmbTypeDoc.Location = new Point(276, 41);
             cmbTypeDoc.Margin = new Padding(4);
             cmbTypeDoc.Name = "cmbTypeDoc";
             cmbTypeDoc.Size = new Size(162, 38);
@@ -291,7 +292,7 @@
             dateStart.IconColor = Color.Gray;
             dateStart.IconLocation = Bunifu.UI.WinForms.BunifuDatePicker.Indicator.Right;
             dateStart.LeftTextMargin = 5;
-            dateStart.Location = new Point(560, 9);
+            dateStart.Location = new Point(446, 42);
             dateStart.Margin = new Padding(4);
             dateStart.MinimumSize = new Size(0, 38);
             dateStart.Name = "dateStart";
@@ -321,7 +322,7 @@
             dateEnd.IconColor = Color.Gray;
             dateEnd.IconLocation = Bunifu.UI.WinForms.BunifuDatePicker.Indicator.Right;
             dateEnd.LeftTextMargin = 5;
-            dateEnd.Location = new Point(702, 9);
+            dateEnd.Location = new Point(588, 42);
             dateEnd.Margin = new Padding(4);
             dateEnd.MinimumSize = new Size(0, 38);
             dateEnd.Name = "dateEnd";
@@ -378,7 +379,7 @@
             btnSend.IdleIconLeftImage = null;
             btnSend.IdleIconRightImage = null;
             btnSend.IndicateFocus = false;
-            btnSend.Location = new Point(7, 55);
+            btnSend.Location = new Point(729, 41);
             btnSend.Name = "btnSend";
             btnSend.OnDisabledState.BorderColor = Color.FromArgb(191, 191, 191);
             btnSend.OnDisabledState.BorderRadius = 34;
@@ -426,7 +427,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(939, 533);
+            ClientSize = new Size(873, 533);
             Controls.Add(dgvDocs);
             Controls.Add(topbar);
             Name = "Main";

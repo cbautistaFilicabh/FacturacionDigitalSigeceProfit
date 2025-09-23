@@ -52,28 +52,53 @@ namespace FacturacionDigital_SIGECE.Forms
             var selectedValue = cmbTypeDoc.SelectedValue;
             string? tipoDoc = selectedValue?.ToString() ?? null;
 
-            var result = _profitService.BuscarDocumentosDigitales(tipoDoc, dateStart.Value, dateEnd.Value);
+            DateTime dDesde = dateStart.Value;
+            DateTime dHasta = dateEnd.Value;
+
+            var result = _profitService.BuscarDocumentosDigitales(tipoDoc, dDesde, dHasta);
             dgvDocs.DataSource = result;
         }
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            var docs = new List<FacturaProfit>();
-
-            foreach (DataGridViewRow row in dgvDocs.SelectedRows)
+            try
             {
-                string docNum = row.Cells["NroDoc"].Value.ToString() ?? string.Empty;
-                var factura = _profitService.BuscarFacturaDigital(docNum);
-                if (factura != null)
-                {
-                    docs.Add(factura);
-                }
-            }
+                var docs = new List<FacturaProfit>();
 
-            var selectedValue = cmbTypeDoc.SelectedValue;
-            string? tipoDoc = selectedValue?.ToString() ?? null;
-            DocumentosService documentos = new DocumentosService();
-            documentos.CreateDocument(tipoDoc, docs);
+                var tiposSeleccionados = new HashSet<string>();
+
+                foreach (DataGridViewRow row in dgvDocs.SelectedRows)
+                {
+                    string docNum = row.Cells["NroDoc"].Value?.ToString() ?? string.Empty;
+                    string tipoDoc = row.Cells["TipoDoc"].Value?.ToString() ?? string.Empty; // <-- columna con el tipo
+
+                    if (!tiposSeleccionados.Contains(tipoDoc))
+                    {
+                        tiposSeleccionados.Add(tipoDoc);
+                    }
+
+                    var factura = _profitService.BuscarFacturaDigital(docNum);
+                    if (factura != null)
+                        docs.Add(factura);
+                }
+
+                // Validar
+                if (tiposSeleccionados.Count > 1)
+                {
+                    MessageBox.Show("No se pueden procesar documentos de distintos tipos. Selecciona solo un tipo de documento.",
+                        "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // En este punto todos son del mismo tipo
+                string tipoSeleccionado = tiposSeleccionados.First();
+                DocumentosService documentos = new DocumentosService();
+                documentos.CreateDocument(tipoSeleccionado, docs);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al enviar documentos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void cmbTypeDoc_SelectedValueChanged(object sender, EventArgs e)
