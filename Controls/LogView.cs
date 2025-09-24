@@ -178,12 +178,20 @@ namespace FacturacionDigital_SIGECE.Controls
                 panel.Controls.Add(lblFechaAsignacion);
                 panel.Controls.Add(lblNroDoc);
                 panel.Controls.Add(lblAutorizado);
-                panel.Controls.Add(lblSerie);
-                panel.Controls.Add(lblComentarios);
-                panel.Controls.Add(lblNumeroFactura);
-                panel.Controls.Add(lblNumeroControl);
-                panel.Controls.Add(lblId);
-                panel.Controls.Add(lblUrlConsulta);
+                //panel.Controls.Add(lblSerie);
+
+                if (item.Autorizado)
+                {
+                    panel.Controls.Add(lblNumeroFactura);
+                    panel.Controls.Add(lblNumeroControl);
+                }
+                else
+                {
+                    panel.Controls.Add(lblComentarios);
+                }
+
+                //panel.Controls.Add(lblId);
+                //panel.Controls.Add(lblUrlConsulta);
 
                 mainBox.Controls.Add(panel);
                 mainBox.Controls.Add(separator);

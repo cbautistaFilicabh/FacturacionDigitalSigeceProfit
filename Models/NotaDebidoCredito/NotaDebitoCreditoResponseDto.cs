@@ -3,27 +3,24 @@
     public class NotaDebitoCreditoResponseDto
     {
         public int code { get; set; }
-        public int TotalFacturasProcedas { get; set; }
-        public int totalFacturasNew { get; set; }
-        public int totalFacturaconError { get; set; }
-        public int totalIngrsosCliente { get; set; }
-        public int totalErrorFactura { get; set; }
-        public List<List<DetalleErrorFactura>> DetalleErrorFacturas { get; set; }
-        public List<List<DetalleFacturaProcesadas>> DetalleFacturaProcesadas { get; set; }
+        public int TotalNotasProcedas { get; set; }
+        public int totalNotasNew { get; set; }
+        public int totalNotasconError { get; set; }
+        public List<List<DetalleErrorNotas>> DetalleErrorNotas { get; set; }
+        public List<List<DetalleNotasProcesadas>> DetalleNotasProcesadas { get; set; }
     }
 
-    public class DetalleErrorFactura
+    public class DetalleErrorNotas
     {
-        public int? posicion { get; set; }
-        public string NroFactura { get; set; }
+        public string nroNota { get; set; }
         public string Msg { get; set; }
     }
 
-    public class DetalleFacturaProcesadas
+    public class DetalleNotasProcesadas
     {
-        public string NroFactura { get; set; }
-        public string NroControl { get; set; }
-        public string Cliente { get; set; }
+        public string serie { get; set; }
+        public string nroNota { get; set; }
+        public string nroControl { get; set; }
         public string Msg { get; set; }
     }
 }

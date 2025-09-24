@@ -77,33 +77,33 @@ namespace FacturacionDigital_SIGECE.Services.Common
                     {
                         var msg = new StringBuilder();
 
-                        if (responseNota.Data.DetalleFacturaProcesadas?.Any() == true)
+                        if (responseNota.Data.DetalleNotasProcesadas?.Any() == true)
                         {
                             msg.AppendLine("Documentos procesados correctamente:");
 
-                            var facturasProcesadas = responseNota.Data.DetalleFacturaProcesadas
+                            var facturasProcesadas = responseNota.Data.DetalleNotasProcesadas
                                 .SelectMany(list => list) // aplanar la lista de listas
                                 .ToList();
 
                             foreach (var proc in facturasProcesadas)
                             {
-                                msg.AppendLine($"Número:{proc.NroFactura}");
+                                msg.AppendLine($"Número:{proc.nroNota}");
                                 msg.AppendLine("N. Control: {proc.NroControl}");
                             }
                             msg.AppendLine();
                         }
 
-                        if (responseNota.Data.DetalleErrorFacturas?.Any() == true)
+                        if (responseNota.Data.DetalleErrorNotas?.Any() == true)
                         {
 
-                            var facturasError = responseNota.Data.DetalleErrorFacturas.SelectMany(list => list).ToList();
+                            var notasError = responseNota.Data.DetalleErrorNotas.SelectMany(list => list).ToList();
 
-                            var facturasUnicas = facturasError.GroupBy(e => e.NroFactura).Select(g => g.First()).ToList();
+                            var notasUnicas = notasError.GroupBy(e => e.nroNota).Select(g => g.First()).ToList();
 
-                            msg.AppendLine("Documentos no procesados:" + string.Join(", ", facturasUnicas.Select(e => e.NroFactura)));
+                            msg.AppendLine("Documentos no procesados:" + string.Join(", ", notasUnicas.Select(e => e.nroNota)));
 
                             msg.AppendLine();
-                            msg.AppendLine($"Total de errores: {facturasError.Count}");
+                            msg.AppendLine($"Total de errores: {notasError.Count}");
                             msg.AppendLine("Revisa el histórico para más detalles.");
                         }
                         // Mostrar mensaje al usuario
