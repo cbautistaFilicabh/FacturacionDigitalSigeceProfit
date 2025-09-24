@@ -6,121 +6,121 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
     {
         [Required]
         [MaxLength(12)]
-        public string Rif { get; set; }
+        public string rif { get; set; }
 
         [MaxLength(9)]
-        public int? CodigoSucursal { get; set; }
+        public int? codigoSucursal { get; set; }
 
         [Required]
         [MaxLength(9)]
-        public required string NroFactura { get; set; }
+        public required string nroFactura { get; set; }
 
         [Required]
         [MaxLength(9)]
-        public required string NroNota { get; set; }
+        public required string nroNota { get; set; }
 
         [Required]
-        public required string Tipo { get; set; }
+        public required string tipo { get; set; }
 
         [MaxLength(2)]
-        public string? Serie { get; set; }
+        public string? serie { get; set; }
 
         [Required]
         [MaxLength(1)]
-        public required int Categoria { get; set; }
+        public required int categoria { get; set; }
 
         [Required]
         [MaxLength(99)]
-        public required string Concepto { get; set; }
+        public required string concepto { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal ImporteTotal { get; set; }
+        public required decimal importeTotal { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal Subtotal { get; set; }
+        public required decimal subtotal { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal MontoDescuento { get; set; }
+        public required decimal montoDescuento { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal TotalExento { get; set; }
+        public required decimal totalExento { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal TotalExonerado { get; set; }
+        public required decimal totalExonerado { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal TasaCambio { get; set; }
+        public required decimal tasaCambio { get; set; }
 
         [Required]
         [MaxLength(3)]
-        public required string FacturaDivisa { get; set; }
+        public required string facturaDivisa { get; set; }
 
         [Required]
-        public required List<DetalleNota> IstDetallesNota { get; set; }
+        public required List<List<DetalleNota>> lstDetallesNota { get; set; }
 
         [Required]
-        public required List<GravamenDto>? IstGravamenes { get; set; }
+        public required List<List<GravamenDto>> lstGravamenes { get; set; }
     }
 
     public class DetalleNota
     {
         [Required]
         [MaxLength(30)]
-        public required string CodigoProducto { get; set; }
+        public required string codigoProducto { get; set; }
 
         [Required]
-        [MaxLength(250)] // El documento indica 250 para descripción del producto en Facturas Generales, asumo lo mismo aquí.
-        public required string Descripcion { get; set; }
+        [MaxLength(250)]
+        public required string descripcion { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal Cantidad { get; set; }
+        public required decimal cantidad { get; set; }
 
         [Required]
         [MaxLength(10)]
-        public string UnidadMedida { get; set; }
+        public string unidadMedida { get; set; }
 
         [MaxLength(20)]
-        public decimal? CantidadOriginal { get; set; }
+        public decimal? cantidadOriginal { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal Precio { get; set; }
+        public required decimal precio { get; set; }
 
         [MaxLength(20)]
-        public decimal? PrecioOriginal { get; set; }
+        public decimal? precioOriginal { get; set; }
 
         [MaxLength(20)]
-        public decimal? PrecioDevolucion { get; set; }
+        public decimal? precioDevolucion { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal Importe { get; set; }
+        public required decimal importe { get; set; }
 
-        public bool? Exento { get; set; }
+        public bool? exento { get; set; }
 
-        public bool? Exonerado { get; set; }
-
-        [Required]
-        [MaxLength(20)]
-        public required decimal AlicuotaGravamen { get; set; }
+        public bool? exonerado { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal MontoGravamen { get; set; }
+        public required decimal alicuotaGravamen { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal Descuento { get; set; }
+        public required decimal montoGravamen { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public required decimal MontoDescuento { get; set; }
+        public required decimal descuento { get; set; }
+
+        [Required]
+        [MaxLength(20)]
+        public required decimal montoDescuento { get; set; }
     }
 }

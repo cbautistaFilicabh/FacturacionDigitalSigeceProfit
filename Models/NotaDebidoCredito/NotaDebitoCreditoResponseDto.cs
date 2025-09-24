@@ -8,8 +8,8 @@
         public int totalFacturaconError { get; set; }
         public int totalIngrsosCliente { get; set; }
         public int totalErrorFactura { get; set; }
-        public List<DetalleErrorFactura> DetalleErrorFacturas { get; set; }
-        public List<DetalleFacturaProcesadas> DetalleFacturaProcesadas { get; set; }
+        public List<List<DetalleErrorFactura>> DetalleErrorFacturas { get; set; }
+        public List<List<DetalleFacturaProcesadas>> DetalleFacturaProcesadas { get; set; }
     }
 
     public class DetalleErrorFactura

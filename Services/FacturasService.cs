@@ -7,7 +7,7 @@ namespace FacturacionDigital_SIGECE.Services
 {
     public class FacturasService : ApiService
     {
-        ProfitService profitService = new ProfitService();
+        ProfitService _profitService = new ProfitService();
         public FacturasService() : base(AppConfig.SessionToken)
         {
         }
@@ -24,7 +24,7 @@ namespace FacturacionDigital_SIGECE.Services
 
                 if (result != null)
                 {
-                    profitService.RegistrarRespuestaApi("FACT", numberFact.ToString(), result);
+                    _profitService.RegistrarRespuestaApi("FACT", numberFact.ToString(), result);
                     return new ServiceResult<FacturasResponseDto>
                     {
                         Success = true,

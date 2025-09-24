@@ -21,19 +21,19 @@ namespace FacturacionDigital_SIGECE.Services.Common
             {
                 case "fact":
                     var _facturaService = new FacturasService();
-                    var listData = MapAdminToApi<FacturasRequestDto>(data) ?? new List<FacturasRequestDto>();
+                    var listDataFact = MapAdminToApi<FacturasRequestDto>(data) ?? new List<FacturasRequestDto>();
 
-                    var response = await _facturaService.CreateAsync(listData);
+                    var responseFact = await _facturaService.CreateAsync(listDataFact);
 
-                    if (response.Success && response.Data != null)
+                    if (responseFact.Success && responseFact.Data != null)
                     {
                         var msg = new StringBuilder();
 
-                        if (response.Data.DetalleFacturaProcesadas?.Any() == true)
+                        if (responseFact.Data.DetalleFacturaProcesadas?.Any() == true)
                         {
                             msg.AppendLine("Facturas procesadas correctamente:");
 
-                            var facturasProcesadas = response.Data.DetalleFacturaProcesadas
+                            var facturasProcesadas = responseFact.Data.DetalleFacturaProcesadas
                                 .SelectMany(list => list) // aplanar la lista de listas
                                 .ToList();
 
@@ -44,10 +44,9 @@ namespace FacturacionDigital_SIGECE.Services.Common
                             msg.AppendLine();
                         }
 
-                        if (response.Data.DetalleErrorFacturas?.Any() == true)
+                        if (responseFact.Data.DetalleErrorFacturas?.Any() == true)
                         {
-
-                            var facturasError = response.Data.DetalleErrorFacturas.SelectMany(list => list).ToList();
+                            var facturasError = responseFact.Data.DetalleErrorFacturas.SelectMany(list => list).ToList();
 
                             var facturasUnicas = facturasError.GroupBy(e => e.NroFactura).Select(g => g.First()).ToList();
 
@@ -63,14 +62,59 @@ namespace FacturacionDigital_SIGECE.Services.Common
                     }
                     else
                     {
-                        MessageBox.Show($"Error al crear facturas: {response.Message}",
+                        MessageBox.Show($"Error al crear facturas: {responseFact.Message}",
                             "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     break;
                 case "n/cr":
                 case "n/db":
                     var _notaDebitoCreditoService = new NotaDebitoCreditoService();
-                    //_notaDebitoCreditoService.CreateAsync((List<NotaDebitoCreditoRequestDto>)data);
+                    var listDataNota = MapAdminToApi<NotaDebitoCreditoRequestDto>(data) ?? new List<NotaDebitoCreditoRequestDto>();
+
+                    var responseNota = await _notaDebitoCreditoService.CreateAsync(listDataNota);
+
+                    if (responseNota.Success && responseNota.Data != null)
+                    {
+                        var msg = new StringBuilder();
+
+                        if (responseNota.Data.DetalleFacturaProcesadas?.Any() == true)
+                        {
+                            msg.AppendLine("Documentos procesados correctamente:");
+
+                            var facturasProcesadas = responseNota.Data.DetalleFacturaProcesadas
+                                .SelectMany(list => list) // aplanar la lista de listas
+                                .ToList();
+
+                            foreach (var proc in facturasProcesadas)
+                            {
+                                msg.AppendLine($"Número:{proc.NroFactura}");
+                                msg.AppendLine("N. Control: {proc.NroControl}");
+                            }
+                            msg.AppendLine();
+                        }
+
+                        if (responseNota.Data.DetalleErrorFacturas?.Any() == true)
+                        {
+
+                            var facturasError = responseNota.Data.DetalleErrorFacturas.SelectMany(list => list).ToList();
+
+                            var facturasUnicas = facturasError.GroupBy(e => e.NroFactura).Select(g => g.First()).ToList();
+
+                            msg.AppendLine("Documentos no procesados:" + string.Join(", ", facturasUnicas.Select(e => e.NroFactura)));
+
+                            msg.AppendLine();
+                            msg.AppendLine($"Total de errores: {facturasError.Count}");
+                            msg.AppendLine("Revisa el histórico para más detalles.");
+                        }
+                        // Mostrar mensaje al usuario
+                        MessageBox.Show(msg.ToString(), "Resultado Impresión", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Error al crear notas: {responseNota.Message}",
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                     break;
                 default:
                     throw new ArgumentException("Tipo de documento no soportado.");
