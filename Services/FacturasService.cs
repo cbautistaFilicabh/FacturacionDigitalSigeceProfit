@@ -7,6 +7,7 @@ namespace FacturacionDigital_SIGECE.Services
 {
     public class FacturasService : ApiService
     {
+        ProfitService profitService = new ProfitService();
         public FacturasService() : base(AppConfig.SessionToken)
         {
         }
@@ -15,11 +16,15 @@ namespace FacturacionDigital_SIGECE.Services
         {
             try
             {
+                //funcional solo cuando se procesa una única factura
+                var numberFact = dto.Select(f => f.nroFactura);
+
                 var url = "facturas/masivafacturacion";
                 var result = await PostAsync<FacturasResponseDto>(url, dto);
 
                 if (result != null)
                 {
+                    profitService.RegistrarRespuestaApi("FACT", numberFact.ToString(), result);
                     return new ServiceResult<FacturasResponseDto>
                     {
                         Success = true,

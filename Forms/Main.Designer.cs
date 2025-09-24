@@ -45,6 +45,7 @@
             dateStart = new Bunifu.UI.WinForms.BunifuDatePicker();
             dateEnd = new Bunifu.UI.WinForms.BunifuDatePicker();
             btnSend = new Bunifu.UI.WinForms.BunifuButton.BunifuButton2();
+            viewLog = new DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)dgvDocs).BeginInit();
             topbar.SuspendLayout();
             SuspendLayout();
@@ -54,6 +55,7 @@
             dgvDocs.AllowCustomTheming = false;
             dgvDocs.AllowUserToAddRows = false;
             dgvDocs.AllowUserToDeleteRows = false;
+            dgvDocs.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 251, 255);
             dataGridViewCellStyle1.ForeColor = Color.Black;
             dgvDocs.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
@@ -61,7 +63,6 @@
             dgvDocs.BackgroundColor = Color.White;
             dgvDocs.BorderStyle = BorderStyle.None;
             dgvDocs.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dgvDocs.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
             dgvDocs.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = Color.DodgerBlue;
@@ -72,6 +73,7 @@
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             dgvDocs.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvDocs.ColumnHeadersHeight = 40;
+            dgvDocs.Columns.AddRange(new DataGridViewColumn[] { viewLog });
             dgvDocs.CurrentTheme.AlternatingRowsStyle.BackColor = Color.FromArgb(248, 251, 255);
             dgvDocs.CurrentTheme.AlternatingRowsStyle.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             dgvDocs.CurrentTheme.AlternatingRowsStyle.ForeColor = Color.Black;
@@ -105,13 +107,20 @@
             dgvDocs.HeaderBgColor = Color.Empty;
             dgvDocs.HeaderForeColor = Color.White;
             dgvDocs.Location = new Point(16, 105);
+            dgvDocs.MultiSelect = false;
             dgvDocs.Name = "dgvDocs";
+            dgvDocs.ReadOnly = true;
             dgvDocs.RowHeadersVisible = false;
+            dgvDocs.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgvDocs.RowTemplate.Height = 40;
             dgvDocs.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvDocs.ShowEditingIcon = false;
+            dgvDocs.ShowRowErrors = false;
             dgvDocs.Size = new Size(841, 412);
             dgvDocs.TabIndex = 0;
             dgvDocs.Theme = Bunifu.UI.WinForms.BunifuDataGridView.PresetThemes.Light;
+            dgvDocs.CellClick += dgvDocs_CellClick;
+            dgvDocs.CellPainting += dgvDocs_CellPainting;
             // 
             // topbar
             // 
@@ -422,6 +431,14 @@
             btnSend.UseDefaultRadiusAndThickness = true;
             btnSend.Click += btnSend_Click;
             // 
+            // viewLog
+            // 
+            viewLog.HeaderText = "";
+            viewLog.MinimumWidth = 30;
+            viewLog.Name = "viewLog";
+            viewLog.ReadOnly = true;
+            viewLog.Width = 30;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -452,5 +469,6 @@
         private Bunifu.UI.WinForms.BunifuDatePicker dateEnd;
         private Bunifu.UI.WinForms.BunifuButton.BunifuButton2 btnSend;
         private Bunifu.UI.WinForms.BunifuLabel lblTitle;
+        private DataGridViewImageColumn viewLog;
     }
 }

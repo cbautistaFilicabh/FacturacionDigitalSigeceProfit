@@ -224,7 +224,7 @@ namespace FacturacionDigital_SIGECE.Services
         }
 
 
-        public void RegristrarRespuestaApi(string tipo_doc, string nro_doc, FacturasResponseDto responseDto)
+        public void RegistrarRespuestaApi(string tipo_doc, string nro_doc, FacturasResponseDto responseDto)
         {
 
             // validar que responseDto no sea nulo y que tenga valor en detalleDocumentoProcesadas
@@ -263,39 +263,39 @@ namespace FacturacionDigital_SIGECE.Services
                         }
                     }
                 }
-                if (responseDto?.DetalleErrorFacturas != null && responseDto.DetalleErrorFacturas.Any(l => l != null && l.Count > 0))
+            }
+            if (responseDto?.DetalleErrorFacturas != null && responseDto.DetalleErrorFacturas.Any(l => l != null && l.Count > 0))
+            {
+                foreach (var lista in responseDto.DetalleErrorFacturas)
                 {
-                    foreach (var lista in responseDto.DetalleErrorFacturas)
+                    if (lista == null || lista.Count == 0) continue;
+
+                    var mensajeAgrupado = string.Join(Environment.NewLine, lista.Select(e => e.Msg).Where(m => !string.IsNullOrEmpty(m)).Select(m => $"- {m}"));
+
+                    var nroDoc = lista.FirstOrDefault()?.NroFactura ?? nro_doc;
+
+                    // Inserta en la base de datos
+                    var connectionString = AppConfig.CadenaConexion;
+                    using (var cn = new SqlConnection(connectionString))
+                    using (var cmd = new SqlCommand())
                     {
-
-
-                        if (lista == null || lista.Count == 0) continue;
-
-                        //agrupo a lista para obtener un unico mensaje agrupado por nro_doc y dejo disponible el nro doc y el mensaje  para insertar en la base de datos
-                        var mensajeAgrupado = string.Join(" | ", lista.Select(e => e.Msg).Where(m => !string.IsNullOrEmpty(m)));
-                        var nroDoc = lista.FirstOrDefault()?.NroFactura ?? nro_doc;
-                        // insertar en la base de datos
-
-                        var connectionString = AppConfig.CadenaConexion;
-                        using (var cn = new SqlConnection(connectionString))
-                        using (var cmd = new SqlCommand())
-                        {
-                            cmd.CommandType = CommandType.Text;
-                            cmd.Connection = cn;
-                            cmd.CommandText = "Insert into sfEstadoDocumento (Autorizado, co_tipo_doc, nro_doc, NumeroFacturaAsignado, NumeroControlAsignado, comentarios) " +
-                                "values " +
-                                "(@autorizado, @co_tipo_doc, @nro_doc, @numeroFacturaAsignado, @numeroControlAsignado, @comentarios)";
-                            cmd.Parameters.AddWithValue("@autorizado", false);
-                            cmd.Parameters.AddWithValue("@co_tipo_doc", tipo_doc);
-                            cmd.Parameters.AddWithValue("@nro_doc", nroDoc);
-                            cmd.Parameters.AddWithValue("@numeroFacturaAsignado", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@numeroControlAsignado", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@comentarios", mensajeAgrupado ?? (object)DBNull.Value);
-                            cn.Open();
-                            cmd.ExecuteNonQuery();
-                        }
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Connection = cn;
+                        cmd.CommandText = "Insert into sfEstadoDocumento (Autorizado, co_tipo_doc, nro_doc, NumeroFacturaAsignado, NumeroControlAsignado, comentarios) " +
+                            "values " +
+                            "(@autorizado, @co_tipo_doc, @nro_doc, @numeroFacturaAsignado, @numeroControlAsignado, @comentarios)";
+                        cmd.Parameters.AddWithValue("@autorizado", false);
+                        cmd.Parameters.AddWithValue("@co_tipo_doc", tipo_doc);
+                        cmd.Parameters.AddWithValue("@nro_doc", nroDoc);
+                        cmd.Parameters.AddWithValue("@numeroFacturaAsignado", (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@numeroControlAsignado", (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@comentarios", mensajeAgrupado ?? (object)DBNull.Value);
+                        cn.Open();
+                        cmd.ExecuteNonQuery();
                     }
                 }
+            }
+        }
 
         public List<EstadoDocumento> ListarEstadoDocumento(string tipo_doc, string nro_doc)
         {
