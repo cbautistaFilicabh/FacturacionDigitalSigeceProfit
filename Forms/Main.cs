@@ -72,7 +72,7 @@ namespace FacturacionDigital_SIGECE.Forms
         {
             try
             {
-                var docs = new List<FacturaProfit>();
+                var docs = new List<DocumentoProfit>();
                 var documentosSeleccionados = DocumentosHelper.GetSelectedDocs(dgvDocs);
 
                 var tiposSeleccionados = documentosSeleccionados
@@ -89,23 +89,28 @@ namespace FacturacionDigital_SIGECE.Forms
 
                 foreach (var doc in documentosSeleccionados)
                 {
-                    if (doc.TipoDoc.ToLower() == "fact")
-                    {
-                        var factura = _profitService.BuscarFacturaDigital(doc.NroDoc);
-                        if (factura != null)
-                            docs.Add(factura);
-                    }
-                    else
-                    {
-                        //var notaCredito = _profitService.BuscarNotaCreditoDigital(doc.NroDoc);
-                        //if (notaCredito != null)
-                        //    docs.Add(notaCredito);
-                    }
+                    //if (doc.TipoDoc.ToLower() == "fact")
+                    //{
+                    //    var documentoProfit = _profitService.BuscarDocDigital(doc.TipoDoc,  doc.NroDoc);
+                    //    if (documentoProfit != null)
+                    //        docs.Add(documentoProfit);
+                    //}
+                    //else
+                    //{
+                    //    //var notaCredito = _profitService.BuscarNotaCreditoDigital(doc.NroDoc);
+                    //    //if (notaCredito != null)
+                    //    //    docs.Add(notaCredito);
+                    //}
+
+                    var documentoProfit = _profitService.BuscarDocDigital(doc.TipoDoc, doc.NroDoc);
+                    if (documentoProfit != null)
+                        docs.Add(documentoProfit);
                 }
 
                 string tipoSeleccionado = tiposSeleccionados.First();
+
                 DocumentosService documentos = new DocumentosService();
-                documentos.CreateDocument(tipoSeleccionado, docs);
+                documentos.CreateDocument(docs);
             }
             catch (Exception ex)
             {
@@ -238,6 +243,13 @@ namespace FacturacionDigital_SIGECE.Forms
 
                 }
             }
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+            dateStart.Value = DateTime.Now;
+            dateEnd.Value = DateTime.Now;
+
         }
     }
 }

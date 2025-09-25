@@ -38,6 +38,7 @@
             Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties4 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
             Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderEdges borderEdges1 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderEdges();
             dgvDocs = new Bunifu.UI.WinForms.BunifuDataGridView();
+            viewLog = new DataGridViewImageColumn();
             topbar = new FlowLayoutPanel();
             lblTitle = new Bunifu.UI.WinForms.BunifuLabel();
             txtSearch = new Bunifu.UI.WinForms.BunifuTextBox();
@@ -45,7 +46,6 @@
             dateStart = new Bunifu.UI.WinForms.BunifuDatePicker();
             dateEnd = new Bunifu.UI.WinForms.BunifuDatePicker();
             btnSend = new Bunifu.UI.WinForms.BunifuButton.BunifuButton2();
-            viewLog = new DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)dgvDocs).BeginInit();
             topbar.SuspendLayout();
             SuspendLayout();
@@ -121,6 +121,14 @@
             dgvDocs.Theme = Bunifu.UI.WinForms.BunifuDataGridView.PresetThemes.Light;
             dgvDocs.CellClick += dgvDocs_CellClick;
             dgvDocs.CellPainting += dgvDocs_CellPainting;
+            // 
+            // viewLog
+            // 
+            viewLog.HeaderText = "";
+            viewLog.MinimumWidth = 30;
+            viewLog.Name = "viewLog";
+            viewLog.ReadOnly = true;
+            viewLog.Width = 30;
             // 
             // topbar
             // 
@@ -431,14 +439,6 @@
             btnSend.UseDefaultRadiusAndThickness = true;
             btnSend.Click += btnSend_Click;
             // 
-            // viewLog
-            // 
-            viewLog.HeaderText = "";
-            viewLog.MinimumWidth = 30;
-            viewLog.Name = "viewLog";
-            viewLog.ReadOnly = true;
-            viewLog.Width = 30;
-            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -451,6 +451,7 @@
             Padding = new Padding(16);
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Facturación Digital - SIGECE";
+            Load += Main_Load;
             Resize += Main_Resize;
             ((System.ComponentModel.ISupportInitialize)dgvDocs).EndInit();
             topbar.ResumeLayout(false);

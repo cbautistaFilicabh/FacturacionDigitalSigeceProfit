@@ -4,13 +4,13 @@ using System.Collections.Generic;
 namespace FacturacionDigital_SIGECE.Models.Profit
 {
     // Clase principal que agrupa encabezado y detalles
-    public class FacturaProfit
+    public class DocumentoProfit
     {
-        public EncabezadoFacturaProfit Encabezado { get; set; } = new EncabezadoFacturaProfit();
-        public List<DetalleFacturaProfit> Detalles { get; set; } = new List<DetalleFacturaProfit>();
+        public EncabezadoDocProfit Encabezado { get; set; } = new EncabezadoDocProfit();
+        public List<DetalleDocProfit> Detalles { get; set; } = new List<DetalleDocProfit>();
     }
 
-    public class EncabezadoFacturaProfit
+    public class EncabezadoDocProfit
     {
 
         // Identificación documento y cliente
@@ -99,9 +99,9 @@ namespace FacturacionDigital_SIGECE.Models.Profit
 
     }
 
-    public class DetalleFacturaProfit
+    public class DetalleDocProfit
     {
-        // public DetalleFacturaProfit( ) => Recalcular();
+        // public DetalleDocProfit( ) => Recalcular();
 
 
         // Identificación artículo

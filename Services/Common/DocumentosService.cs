@@ -15,8 +15,11 @@ namespace FacturacionDigital_SIGECE.Services.Common
 {
     public class DocumentosService
     {
-        public async Task CreateDocument(string typeDocument, List<FacturaProfit> data)
+        public async Task CreateDocument(List<DocumentoProfit> data)
         {
+            
+            string typeDocument = data.First().Encabezado.TipoDoc ?? "fact";    
+
             switch (typeDocument.ToLowerInvariant())
             {
                 case "fact":
@@ -66,7 +69,9 @@ namespace FacturacionDigital_SIGECE.Services.Common
                             "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     break;
+
                 case "n/cr":
+
                 case "n/db":
                     var _notaDebitoCreditoService = new NotaDebitoCreditoService();
                     var listDataNota = MapAdminToApi<NotaDebitoCreditoRequestDto>(data) ?? new List<NotaDebitoCreditoRequestDto>();
@@ -118,6 +123,10 @@ namespace FacturacionDigital_SIGECE.Services.Common
                     break;
                 default:
                     throw new ArgumentException("Tipo de documento no soportado.");
+
+
+
+
             }
         }
 
@@ -129,7 +138,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
             }) ?? new List<T>();
         }
 
-        public List<T>? MapAdminToApi<T>(List<FacturaProfit> profitItems)
+        public List<T>? MapAdminToApi<T>(List<DocumentoProfit> profitItems)
         {
             var newDto = new List<T>();
 

@@ -39,8 +39,8 @@ namespace FacturacionDigital_SIGECE.Services
                 using (var rd = cmd.ExecuteReader(CommandBehavior.CloseConnection))
                 {
 
-                    if (rd.Read())
-                    {
+                    //if (rd.Read())
+                    //{
 
                         while (rd.Read())
                         {
@@ -69,7 +69,7 @@ namespace FacturacionDigital_SIGECE.Services
                             };
                             documentos.Add(doc);
                         }
-                    }
+                  // }
 
 
 
@@ -80,17 +80,18 @@ namespace FacturacionDigital_SIGECE.Services
         }
 
 
-        public FacturaProfit BuscarFacturaDigital(string nro_doc)
+        public DocumentoProfit BuscarDocDigital(string tipo_doc, string nro_doc)
         {
 
 
             var connectionString = AppConfig.CadenaConexion;
-            var doc = new FacturaProfit();
+            var doc = new DocumentoProfit();
             using (var cn = new SqlConnection(connectionString))
-            using (var cmd = new SqlCommand("sfConsultarDocumentosFactura", cn))
+            using (var cmd = new SqlCommand("sfConsultarInfoDocumento", cn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@nro_doc", nro_doc);
+                cmd.Parameters.AddWithValue("@tipo_doc", tipo_doc);
 
 
                 cn.Open();
@@ -100,7 +101,7 @@ namespace FacturacionDigital_SIGECE.Services
                     // ----------------- Result set 1: Encabezado -----------------
                     if (rd.Read())
                     {
-                        doc.Encabezado = new EncabezadoFacturaProfit
+                        doc.Encabezado = new EncabezadoDocProfit
                         {
                             TipoDoc = SafeGetHelper.SafeGet(rd, "TipoDoc", "").Trim(),
                             NroDoc = SafeGetHelper.SafeGet(rd, "NroDoc", "").Trim(),
@@ -175,9 +176,9 @@ namespace FacturacionDigital_SIGECE.Services
 
 
                         };
-                        var det1 = new DetalleFacturaProfit
+                        var det1 = new DetalleDocProfit
                         {
-                            //inicualizo los atributos de DetalleFacturaProfit
+                            //inicualizo los atributos de DetalleDocProfit
                             NroRenglon = SafeGetHelper.SafeGet(rd, "NroRenglon", 0),
                             CodigoArticulo = SafeGetHelper.SafeGet(rd, "CodigoArticulo", "").Trim(),
                             DescripcionArticulo = SafeGetHelper.SafeGet(rd, "DescripcionArticulo", "").Trim(),
@@ -196,9 +197,9 @@ namespace FacturacionDigital_SIGECE.Services
 
                         while (rd.Read())
                         {
-                            var det = new DetalleFacturaProfit
+                            var det = new DetalleDocProfit
                             {
-                                //inicualizo los atributos de DetalleFacturaProfit
+                                //inicualizo los atributos de DetalleDocProfit
                                 NroRenglon = SafeGetHelper.SafeGet(rd, "NroRenglon", 0),
                                 CodigoArticulo = SafeGetHelper.SafeGet(rd, "CodigoArticulo", "").Trim(),
                                 DescripcionArticulo = SafeGetHelper.SafeGet(rd, "DescripcionArticulo", "").Trim(),
@@ -242,28 +243,7 @@ namespace FacturacionDigital_SIGECE.Services
 
                         foreach (var detalle in lista)
                         {
-                            // insertar en la base de datos
-
-                            var connectionString = AppConfig.CadenaConexion;
-                            using (var cn = new SqlConnection(connectionString))
-                            using (var cmd = new SqlCommand())
-                            {
-                                cmd.CommandType = CommandType.Text;
-                                cmd.Connection = cn;
-                                cmd.CommandText = "Insert into sfEstadoDocumento (Autorizado, co_tipo_doc, nro_doc, NumeroFacturaAsignado, NumeroControlAsignado, comentarios) " +
-                                    "values " +
-                                    "(@autorizado, @co_tipo_doc, @nro_doc, @numeroFacturaAsignado, @numeroControlAsignado, @comentarios)";
-
-                                cmd.Parameters.AddWithValue("@autorizado", true);
-                                cmd.Parameters.AddWithValue("@co_tipo_doc", tipo_doc);
-                                cmd.Parameters.AddWithValue("@nro_doc", nro_doc);
-                                cmd.Parameters.AddWithValue("@numeroFacturaAsignado", detalle.NroFactura ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@numeroControlAsignado", detalle.NroControl ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@comentarios", (object)DBNull.Value);
-
-                                cn.Open();
-                                cmd.ExecuteNonQuery();
-                            }
+                            registrarLog(nro_doc, tipo_doc, true, "", detalle.NroFactura ?? "", detalle.NroControl ?? "");
                         }
                     }
                 }
@@ -276,31 +256,44 @@ namespace FacturacionDigital_SIGECE.Services
                         var mensajeAgrupado = string.Join(Environment.NewLine, lista.Select(e => e.Msg).Where(m => !string.IsNullOrEmpty(m)).Select(m => $"- {m}"));
 
                         var nroDoc = lista.FirstOrDefault()?.NroFactura ?? nro_doc;
+                        registrarLog(nro_doc, tipo_doc, false, mensajeAgrupado ?? "", "", "");
 
-                        // Inserta en la base de datos
-                        var connectionString = AppConfig.CadenaConexion;
-                        using (var cn = new SqlConnection(connectionString))
-                        using (var cmd = new SqlCommand())
-                        {
-                            cmd.CommandType = CommandType.Text;
-                            cmd.Connection = cn;
-                            cmd.CommandText = "Insert into sfEstadoDocumento (Autorizado, co_tipo_doc, nro_doc, NumeroFacturaAsignado, NumeroControlAsignado, comentarios) " +
-                                "values " +
-                                "(@autorizado, @co_tipo_doc, @nro_doc, @numeroFacturaAsignado, @numeroControlAsignado, @comentarios)";
-                            cmd.Parameters.AddWithValue("@autorizado", false);
-                            cmd.Parameters.AddWithValue("@co_tipo_doc", tipo_doc);
-                            cmd.Parameters.AddWithValue("@nro_doc", nroDoc);
-                            cmd.Parameters.AddWithValue("@numeroFacturaAsignado", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@numeroControlAsignado", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@comentarios", mensajeAgrupado ?? (object)DBNull.Value);
-                            cn.Open();
-                            cmd.ExecuteNonQuery();
-                        }
+                         
                     }
                 }
             }
             else if (responseDto is NotaDebitoCreditoResponseDto)
             {
+                if (responseDto is NotaDebitoCreditoResponseDto NotCreDto)
+                {
+
+                    if (NotCreDto?.DetalleNotasProcesadas != null && NotCreDto.DetalleNotasProcesadas.Any(l => l != null && l.Count > 0))
+                    {
+                        foreach (var lista in NotCreDto.DetalleNotasProcesadas)
+                        {
+                            if (lista == null || lista.Count == 0) continue;
+
+                            foreach (var detalle in lista)
+                            {
+                                registrarLog(nro_doc, tipo_doc, true, null, detalle.nroNota ?? "", detalle.nroControl);
+                            }
+                        }
+                    }
+                    if (NotCreDto?.DetalleErrorNotas != null && NotCreDto.DetalleErrorNotas.Any(l => l != null && l.Count > 0))
+                    {
+                        foreach (var lista in NotCreDto.DetalleErrorNotas)
+                        {
+                            if (lista == null || lista.Count == 0) continue;
+
+                            var mensajeAgrupado = string.Join(Environment.NewLine, lista.Select(e => e.Msg).Where(m => !string.IsNullOrEmpty(m)).Select(m => $"- {m}"));
+
+                            var nroDoc = lista.FirstOrDefault()?.nroNota ?? nro_doc;
+                            registrarLog(nro_doc, tipo_doc, false, mensajeAgrupado, "", "");
+
+
+                        }
+                    }
+                }
             }
         }
 
@@ -348,6 +341,35 @@ namespace FacturacionDigital_SIGECE.Services
 
 
                 return estados;
+            }
+        }
+
+
+        private void registrarLog(string nroDoc, string tipoDoc, bool autorizado, string? mensajeAgrupado, string nroDocAsignado, string? nroContolASignado)
+        {
+
+
+            // insertar en la base de datos
+
+            var connectionString = AppConfig.CadenaConexion;
+            using (var cn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+                cmd.CommandText = "Insert into sfEstadoDocumento (Autorizado, co_tipo_doc, nro_doc, NumeroFacturaAsignado, NumeroControlAsignado, comentarios) " +
+                    "values " +
+                    "(@autorizado, @co_tipo_doc, @nro_doc, @numeroFacturaAsignado, @numeroControlAsignado, @comentarios)";
+
+                cmd.Parameters.AddWithValue("@autorizado", autorizado);
+                cmd.Parameters.AddWithValue("@co_tipo_doc", tipoDoc);
+                cmd.Parameters.AddWithValue("@nro_doc", nroDoc);
+                cmd.Parameters.AddWithValue("@numeroFacturaAsignado", nroDocAsignado);
+                cmd.Parameters.AddWithValue("@numeroControlAsignado", nroContolASignado);
+                cmd.Parameters.AddWithValue("@comentarios", mensajeAgrupado);
+
+                cn.Open();
+                cmd.ExecuteNonQuery();
             }
         }
     }

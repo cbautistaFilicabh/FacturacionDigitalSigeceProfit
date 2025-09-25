@@ -17,8 +17,8 @@ namespace FacturacionDigital_SIGECE.Services
             try
             {
                 //funcional solo cuando se procesa una única factura
-                var numberFact = dto.Select(f => f.nroFactura);
-
+                
+                string numberFact = dto.First().nroFactura;
                 var url = "facturas/masivafacturacion";
                 var result = await PostAsync<FacturasResponseDto>(url, dto);
 
