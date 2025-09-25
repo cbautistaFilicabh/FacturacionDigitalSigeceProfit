@@ -220,6 +220,62 @@ namespace FacturacionDigital_SIGECE.Services.Common
                     newDto.Add((T)(object)facturaDto);
                 }
             }
+            else if (typeof(T) == typeof(NotaDebitoCreditoRequestDto))
+            {
+                NotaDebitoCreditoRequestDto notaDto;
+
+                foreach (var item in profitItems)
+                {
+                    var detallesNota = new List<DetalleNota>();
+                    foreach (var detalle in item.Detalles)
+                    {
+                        detallesNota.Add(
+                            new DetalleNota
+                            {
+                                codigoProducto = (detalle.CodigoArticulo ?? "").Trim(),
+                                descripcion = (detalle.DescripcionArticulo ?? "").Trim(),
+                                cantidad = detalle.Cantidad,
+                                unidadMedida = detalle.DescripcionUnidadDeMedida ?? "UNIDAD",
+                                cantidadOriginal = 0, //falta
+                                precio = detalle.PrecioUnitario,
+                                precioOriginal = 0, //falta
+                                precioDevolucion = null,
+                                importe = detalle.PorcIvaRenglon == 0 ? detalle.ExentoRenglon : detalle.BaseImponibleRenglon,
+                                exento = detalle.PorcIvaRenglon == 0 ? true : false,
+                                exonerado = detalle.exonerado,
+                                alicuotaGravamen = detalle.PorcIvaRenglon,
+                                montoGravamen = detalle.IvaMontoRenglon,
+                                descuento = detalle.PorcDescuento,
+                                montoDescuento = detalle.MontoDescuento
+                            }
+                        );
+                    }
+
+                    var lstGravamen = GravamenList(detallesNota);
+
+                    // Propiedades de NotaDebitoCreditoRequestDto para asignar valores
+                    notaDto = new NotaDebitoCreditoRequestDto
+                    {
+                        rif = item.Encabezado.Rif ?? "",
+                        codigoSucursal = string.IsNullOrWhiteSpace(item.Encabezado.Sucursal) ? null : Convert.ToInt32(item.Encabezado.CoSucuIn),
+                        nroFactura = item.Encabezado.NumeroFacturaAfectada ?? "",
+                        nroNota = item.Encabezado.NroDoc ?? "",
+                        tipo = item.Encabezado.TipoDoc ?? "",
+                        serie = item.Encabezado.Serie,
+                        categoria = 2, // falta
+                        concepto = item.Encabezado.Descripcion ?? "",
+                        importeTotal = item.Encabezado.TotalGeneral ?? 0,
+                        subtotal = item.Encabezado.SubTotal ?? 0,
+                        montoDescuento = item.Encabezado.MontoDescGlob ?? 0,
+                        totalExento = item.Encabezado.MontoExentoTotal ?? 0,
+                        totalExonerado = item.Encabezado.TotalExonerado,
+                        tasaCambio = item.Encabezado.Tasa ?? 0,
+                        facturaDivisa = (item.Encabezado.CoMone ?? "").Trim(),
+                        lstDetallesNota = detallesNota,
+                        lstGravamenes = lstGravamen
+                    };
+                }
+            }
             else
             {
                 throw new NotSupportedException($"Mapping to type {typeof(T).Name} is not supported.");
@@ -228,38 +284,69 @@ namespace FacturacionDigital_SIGECE.Services.Common
             return newDto;
         }
 
-        public static List<GravamenDto> GravamenList(List<DetalleFacturaDto> productsList)
+        public static List<GravamenDto> GravamenList<T>(List<T> productsList)
         {
             try
             {
                 if (productsList == null || productsList.Count == 0)
                     return new List<GravamenDto>();
 
-                var alicuotasValidas = new int[] { 16, 8, 31 };
+                var alicuotasValidas = new decimal[] { 16, 8, 31 };
                 var result = new List<GravamenDto>();
 
-                foreach (var item in productsList)
+                if (typeof(T) == typeof(DetalleFacturaDto))
                 {
-                    if (item.exento || !alicuotasValidas.Contains(Convert.ToInt32(item.alicuotaGravamen)))
-                        continue;
-
-                    // Buscar si ya existe un registro con esa alícuota
-                    var existente = result.FirstOrDefault(x => x.alicuota == item.alicuotaGravamen);
-
-                    if (existente == null)
+                    foreach (var item in productsList.Cast<DetalleFacturaDto>())
                     {
-                        result.Add(new GravamenDto
+                        if (item.exento || !alicuotasValidas.Contains(item.alicuotaGravamen))
+                            continue;
+
+                        var existente = result.FirstOrDefault(x => x.alicuota == item.alicuotaGravamen);
+
+                        if (existente == null)
                         {
-                            alicuota = item.alicuotaGravamen,
-                            baseImponible = item.importe,
-                            montoAlicuota = item.montoGravamen
-                        });
+                            result.Add(new GravamenDto
+                            {
+                                alicuota = item.alicuotaGravamen,
+                                baseImponible = item.importe,
+                                montoAlicuota = item.montoGravamen
+                            });
+                        }
+                        else
+                        {
+                            existente.baseImponible += item.importe;
+                            existente.montoAlicuota += item.montoGravamen;
+                        }
                     }
-                    else
+                }
+                else if (typeof(T) == typeof(DetalleNota))
+                {
+                    foreach (var item in productsList.Cast<DetalleNota>())
                     {
-                        existente.baseImponible += item.importe;
-                        existente.montoAlicuota += item.montoGravamen;
+                        if (item.exento.GetValueOrDefault() || !alicuotasValidas.Contains(item.alicuotaGravamen))
+                            continue;
+
+                        var existente = result.FirstOrDefault(x => x.alicuota == item.alicuotaGravamen);
+
+                        if (existente == null)
+                        {
+                            result.Add(new GravamenDto
+                            {
+                                alicuota = item.alicuotaGravamen,
+                                baseImponible = item.importe,
+                                montoAlicuota = item.montoGravamen
+                            });
+                        }
+                        else
+                        {
+                            existente.baseImponible += item.importe;
+                            existente.montoAlicuota += item.montoGravamen;
+                        }
                     }
+                }
+                else
+                {
+                    throw new NotSupportedException($"El tipo {typeof(T).Name} no está soportado en GravamenList");
                 }
 
                 return result;

@@ -62,10 +62,10 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
         public required string facturaDivisa { get; set; }
 
         [Required]
-        public required List<List<DetalleNota>> lstDetallesNota { get; set; }
+        public required List<DetalleNota> lstDetallesNota { get; set; }
 
         [Required]
-        public required List<List<GravamenDto>> lstGravamenes { get; set; }
+        public required List<GravamenDto> lstGravamenes { get; set; }
     }
 
     public class DetalleNota

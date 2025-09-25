@@ -58,7 +58,14 @@ namespace FacturacionDigital_SIGECE.Forms
             DateTime dHasta = dateEnd.Value;
 
             var result = _profitService.BuscarDocumentosDigitales(tipoDoc, dDesde, dHasta);
-            dgvDocs.DataSource = result;
+
+            dgvDocs.DataSource = result.Select(doc =>
+            {
+                doc.Estado = bool.TryParse(doc.Estado, out bool estadoBool) ? (estadoBool ? "Procesado" : "Sin procesar") : doc.Estado;
+                return doc;
+            }).ToList();
+
+            TableColumnsSize();
         }
 
         private void PrintDocument()
@@ -82,9 +89,18 @@ namespace FacturacionDigital_SIGECE.Forms
 
                 foreach (var doc in documentosSeleccionados)
                 {
-                    var factura = _profitService.BuscarFacturaDigital(doc.NroDoc);
-                    if (factura != null)
-                        docs.Add(factura);
+                    if (doc.TipoDoc.ToLower() == "fact")
+                    {
+                        var factura = _profitService.BuscarFacturaDigital(doc.NroDoc);
+                        if (factura != null)
+                            docs.Add(factura);
+                    }
+                    else
+                    {
+                        //var notaCredito = _profitService.BuscarNotaCreditoDigital(doc.NroDoc);
+                        //if (notaCredito != null)
+                        //    docs.Add(notaCredito);
+                    }
                 }
 
                 string tipoSeleccionado = tiposSeleccionados.First();
@@ -95,6 +111,18 @@ namespace FacturacionDigital_SIGECE.Forms
             {
                 MessageBox.Show($"Error al enviar documentos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void TableColumnsSize()
+        {
+            int sum = 0;
+            foreach (DataGridViewColumn col in dgvDocs.Columns)
+            {
+                if (col.Visible)
+                    sum += col.Width;
+            }
+
+            dgvDocs.AutoSizeColumnsMode = sum > DisplayRectangle.Width - 20 ? DataGridViewAutoSizeColumnsMode.ColumnHeader : DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void btnSend_Click(object sender, EventArgs e)
@@ -144,6 +172,7 @@ namespace FacturacionDigital_SIGECE.Forms
         private void Main_Resize(object sender, EventArgs e)
         {
             lblTitle.MinimumSize = new Size(topbar.DisplayRectangle.Width, 0);
+            TableColumnsSize();
         }
 
         private void dateStart_ValueChanged(object sender, EventArgs e)
