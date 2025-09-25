@@ -28,23 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderEdges borderEdges1 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderEdges();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LogView));
+            Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderEdges borderEdges1 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderEdges();
             mainBox = new FlowLayoutPanel();
             btnOk = new Bunifu.UI.WinForms.BunifuButton.BunifuButton2();
-            bunifuSeparator1 = new Bunifu.UI.WinForms.BunifuSeparator();
-            mainBox.SuspendLayout();
             SuspendLayout();
             // 
             // mainBox
             // 
             mainBox.AutoScroll = true;
-            mainBox.Controls.Add(bunifuSeparator1);
             mainBox.Dock = DockStyle.Fill;
             mainBox.Location = new Point(16, 16);
             mainBox.Margin = new Padding(0);
             mainBox.Name = "mainBox";
-            mainBox.Size = new Size(380, 614);
+            mainBox.Size = new Size(380, 479);
             mainBox.TabIndex = 0;
             // 
             // btnOk
@@ -53,7 +50,7 @@
             btnOk.AllowMouseEffects = true;
             btnOk.AllowToggling = false;
             btnOk.AnimationSpeed = 200;
-            btnOk.AutoGenerateColors = false;
+            btnOk.AutoGenerateColors = true;
             btnOk.AutoRoundBorders = false;
             btnOk.AutoSizeLeftIcon = true;
             btnOk.AutoSizeRightIcon = true;
@@ -77,7 +74,7 @@
             btnOk.Dock = DockStyle.Bottom;
             btnOk.FocusState = Bunifu.UI.WinForms.BunifuButton.BunifuButton2.ButtonStates.Pressed;
             btnOk.Font = new Font("Segoe UI", 9F);
-            btnOk.ForeColor = Color.DodgerBlue;
+            btnOk.ForeColor = Color.White;
             btnOk.IconLeft = null;
             btnOk.IconLeftAlign = ContentAlignment.MiddleLeft;
             btnOk.IconLeftCursor = Cursors.Default;
@@ -96,38 +93,38 @@
             btnOk.IdleIconLeftImage = null;
             btnOk.IdleIconRightImage = null;
             btnOk.IndicateFocus = false;
-            btnOk.Location = new Point(16, 630);
+            btnOk.Location = new Point(16, 495);
             btnOk.Margin = new Padding(0);
             btnOk.Name = "btnOk";
             btnOk.OnDisabledState.BorderColor = Color.FromArgb(191, 191, 191);
-            btnOk.OnDisabledState.BorderRadius = 1;
+            btnOk.OnDisabledState.BorderRadius = 32;
             btnOk.OnDisabledState.BorderStyle = Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderStyles.Solid;
             btnOk.OnDisabledState.BorderThickness = 1;
             btnOk.OnDisabledState.FillColor = Color.FromArgb(204, 204, 204);
             btnOk.OnDisabledState.ForeColor = Color.FromArgb(168, 160, 168);
             btnOk.OnDisabledState.IconLeftImage = null;
             btnOk.OnDisabledState.IconRightImage = null;
-            btnOk.onHoverState.BorderColor = Color.Transparent;
-            btnOk.onHoverState.BorderRadius = 1;
+            btnOk.onHoverState.BorderColor = Color.FromArgb(131, 193, 255);
+            btnOk.onHoverState.BorderRadius = 32;
             btnOk.onHoverState.BorderStyle = Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderStyles.Solid;
             btnOk.onHoverState.BorderThickness = 1;
-            btnOk.onHoverState.FillColor = Color.AliceBlue;
-            btnOk.onHoverState.ForeColor = Color.DodgerBlue;
+            btnOk.onHoverState.FillColor = Color.FromArgb(131, 193, 255);
+            btnOk.onHoverState.ForeColor = Color.White;
             btnOk.onHoverState.IconLeftImage = null;
             btnOk.onHoverState.IconRightImage = null;
-            btnOk.OnIdleState.BorderColor = Color.Transparent;
-            btnOk.OnIdleState.BorderRadius = 1;
+            btnOk.OnIdleState.BorderColor = Color.DodgerBlue;
+            btnOk.OnIdleState.BorderRadius = 32;
             btnOk.OnIdleState.BorderStyle = Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderStyles.Solid;
             btnOk.OnIdleState.BorderThickness = 1;
-            btnOk.OnIdleState.FillColor = Color.Transparent;
-            btnOk.OnIdleState.ForeColor = Color.DodgerBlue;
+            btnOk.OnIdleState.FillColor = Color.DodgerBlue;
+            btnOk.OnIdleState.ForeColor = Color.White;
             btnOk.OnIdleState.IconLeftImage = null;
             btnOk.OnIdleState.IconRightImage = null;
-            btnOk.OnPressedState.BorderColor = Color.Transparent;
-            btnOk.OnPressedState.BorderRadius = 1;
+            btnOk.OnPressedState.BorderColor = Color.FromArgb(16, 79, 140);
+            btnOk.OnPressedState.BorderRadius = 32;
             btnOk.OnPressedState.BorderStyle = Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderStyles.Solid;
             btnOk.OnPressedState.BorderThickness = 1;
-            btnOk.OnPressedState.FillColor = Color.DodgerBlue;
+            btnOk.OnPressedState.FillColor = Color.FromArgb(16, 79, 140);
             btnOk.OnPressedState.ForeColor = Color.White;
             btnOk.OnPressedState.IconLeftImage = null;
             btnOk.OnPressedState.IconRightImage = null;
@@ -140,28 +137,12 @@
             btnOk.UseDefaultRadiusAndThickness = true;
             btnOk.Click += btnOk_Click;
             // 
-            // bunifuSeparator1
-            // 
-            bunifuSeparator1.BackColor = Color.Transparent;
-            bunifuSeparator1.BackgroundImage = (Image)resources.GetObject("bunifuSeparator1.BackgroundImage");
-            bunifuSeparator1.BackgroundImageLayout = ImageLayout.Stretch;
-            bunifuSeparator1.DashCap = Bunifu.UI.WinForms.BunifuSeparator.CapStyles.Flat;
-            bunifuSeparator1.LineColor = Color.Silver;
-            bunifuSeparator1.LineStyle = Bunifu.UI.WinForms.BunifuSeparator.LineStyles.Solid;
-            bunifuSeparator1.LineThickness = 1;
-            bunifuSeparator1.Location = new Point(4, 3);
-            bunifuSeparator1.Margin = new Padding(4, 3, 4, 3);
-            bunifuSeparator1.Name = "bunifuSeparator1";
-            bunifuSeparator1.Orientation = Bunifu.UI.WinForms.BunifuSeparator.LineOrientation.Horizontal;
-            bunifuSeparator1.Size = new Size(372, 16);
-            bunifuSeparator1.TabIndex = 0;
-            // 
             // LogView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(412, 683);
+            ClientSize = new Size(412, 548);
             Controls.Add(mainBox);
             Controls.Add(btnOk);
             FormBorderStyle = FormBorderStyle.None;
@@ -169,7 +150,6 @@
             Padding = new Padding(16);
             StartPosition = FormStartPosition.CenterParent;
             Text = "LogView";
-            mainBox.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -177,6 +157,5 @@
 
         private FlowLayoutPanel mainBox;
         private Bunifu.UI.WinForms.BunifuButton.BunifuButton2 btnOk;
-        private Bunifu.UI.WinForms.BunifuSeparator bunifuSeparator1;
     }
 }

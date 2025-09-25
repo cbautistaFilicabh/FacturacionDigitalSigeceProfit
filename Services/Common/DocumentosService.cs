@@ -15,10 +15,15 @@ namespace FacturacionDigital_SIGECE.Services.Common
 {
     public class DocumentosService
     {
+        /// <summary>
+        /// Se encarga de procesar una lista de documentos (facturas, notas de débito/crédito) y enviarlos a la API externa correspondiente.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task CreateDocument(List<DocumentoProfit> data)
         {
-            
-            string typeDocument = data.First().Encabezado.TipoDoc ?? "fact";    
+            string typeDocument = data.First().Encabezado.TipoDoc ?? "fact";
 
             switch (typeDocument.ToLowerInvariant())
             {
@@ -71,7 +76,6 @@ namespace FacturacionDigital_SIGECE.Services.Common
                     break;
 
                 case "n/cr":
-
                 case "n/db":
                     var _notaDebitoCreditoService = new NotaDebitoCreditoService();
                     var listDataNota = MapAdminToApi<NotaDebitoCreditoRequestDto>(data) ?? new List<NotaDebitoCreditoRequestDto>();
@@ -93,7 +97,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
                             foreach (var proc in facturasProcesadas)
                             {
                                 msg.AppendLine($"Número:{proc.nroNota}");
-                                msg.AppendLine("N. Control: {proc.NroControl}");
+                                msg.AppendLine($"N. Control: {proc.nroControl}");
                             }
                             msg.AppendLine();
                         }
@@ -117,27 +121,23 @@ namespace FacturacionDigital_SIGECE.Services.Common
                     }
                     else
                     {
-                        MessageBox.Show($"Error al crear notas: {responseNota.Message}",
+                        MessageBox.Show($"{responseNota.Message}",
                             "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     break;
                 default:
                     throw new ArgumentException("Tipo de documento no soportado.");
-
-
-
-
             }
         }
 
-        public List<T> DeserializeJsonToList<T>(string json)
-        {
-            return JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            }) ?? new List<T>();
-        }
-
+        /// <summary>
+        /// Se encarga de mapear los datos desde el formato de DocumentoProfit al formato requerido por la API externa.
+        /// Aquí se manejan dos tipos de mapeos: uno para facturas y otro para notas de débito/crédito, y se setean los campos necesarios.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="profitItems"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException"></exception>
         public List<T>? MapAdminToApi<T>(List<DocumentoProfit> profitItems)
         {
             var newDto = new List<T>();
@@ -202,7 +202,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         montoDescuento = item.Encabezado.MontoDescGlob ?? 0,
                         totalExento = item.Encabezado.MontoExentoTotal ?? 0,
                         totalExonerado = item.Encabezado.TotalExonerado,
-                        condicionPago = "CONTADO", //(item.Encabezado.CondDes ?? "CONTADO").Trim(),
+                        condicionPago = (item.Encabezado.CondDes ?? "CONTADO").Trim(),
                         facturaDivisa = (item.Encabezado.CoMone ?? "").Trim(),
                         cambioDivisa = 1,
                         tipoCambioDiaUsd = item.Encabezado.Tasa ?? 0,
@@ -245,36 +245,35 @@ namespace FacturacionDigital_SIGECE.Services.Common
                                 descripcion = (detalle.DescripcionArticulo ?? "").Trim(),
                                 cantidad = detalle.Cantidad,
                                 unidadMedida = detalle.DescripcionUnidadDeMedida ?? "UNIDAD",
-                                cantidadOriginal = 0, //falta
+                                cantidadDevolucion = detalle.Cantidad, //falta
                                 precio = detalle.PrecioUnitario,
-                                precioOriginal = 0, //falta
-                                precioDevolucion = null,
-                                importe = detalle.PorcIvaRenglon == 0 ? detalle.ExentoRenglon : detalle.BaseImponibleRenglon,
+                                precioOriginal = detalle.TotalRenglon, //falta
+                                precioDevolucion = detalle.TotalRenglon,
+                                descuento = detalle.PorcDescuento,
+                                montoDescuento = detalle.MontoDescuento,
                                 exento = detalle.PorcIvaRenglon == 0 ? true : false,
                                 exonerado = detalle.exonerado,
+                                importe = detalle.PorcIvaRenglon == 0 ? detalle.ExentoRenglon : detalle.BaseImponibleRenglon,
                                 alicuotaGravamen = detalle.PorcIvaRenglon,
-                                montoGravamen = detalle.IvaMontoRenglon,
-                                descuento = detalle.PorcDescuento,
-                                montoDescuento = detalle.MontoDescuento
+                                montoGravamen = detalle.IvaMontoRenglon
                             }
                         );
                     }
 
                     var lstGravamen = GravamenList(detallesNota);
 
-                    // Propiedades de NotaDebitoCreditoRequestDto para asignar valores
                     notaDto = new NotaDebitoCreditoRequestDto
                     {
-                        rif = item.Encabezado.Rif ?? "",
-                        codigoSucursal = string.IsNullOrWhiteSpace(item.Encabezado.Sucursal) ? null : Convert.ToInt32(item.Encabezado.CoSucuIn),
+                        rif = item.Encabezado.RifEmisor ?? "",
+                        codigoSucursal = string.IsNullOrWhiteSpace(item.Encabezado.Sucursal) ? null : item.Encabezado.Sucursal.Trim(),
                         nroFactura = item.Encabezado.NumeroFacturaAfectada ?? "",
                         nroNota = item.Encabezado.NroDoc ?? "",
-                        tipo = item.Encabezado.TipoDoc ?? "",
-                        serie = item.Encabezado.Serie,
-                        categoria = 2, // falta
+                        tipo = item.Encabezado.TipoDoc.ToLowerInvariant() == "n/cr" ? "Credito" : "Debito",
+                        serie = item.Encabezado.Serie ?? null,
+                        categoria = "2", // falta
                         concepto = item.Encabezado.Descripcion ?? "",
                         importeTotal = item.Encabezado.TotalGeneral ?? 0,
-                        subtotal = item.Encabezado.SubTotal ?? 0,
+                        subTotal = item.Encabezado.SubTotal ?? 0,
                         montoDescuento = item.Encabezado.MontoDescGlob ?? 0,
                         totalExento = item.Encabezado.MontoExentoTotal ?? 0,
                         totalExonerado = item.Encabezado.TotalExonerado,
@@ -283,6 +282,8 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         lstDetallesNota = detallesNota,
                         lstGravamenes = lstGravamen
                     };
+
+                    newDto.Add((T)(object)notaDto);
                 }
             }
             else
@@ -293,6 +294,14 @@ namespace FacturacionDigital_SIGECE.Services.Common
             return newDto;
         }
 
+
+        /// <summary>
+        /// Se encarga de generar una lista de gravámenes a partir de una lista de productos o detalles de factura/nota.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="productsList"></param>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
         public static List<GravamenDto> GravamenList<T>(List<T> productsList)
         {
             try

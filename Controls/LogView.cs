@@ -105,7 +105,7 @@ namespace FacturacionDigital_SIGECE.Controls
                     Location = new Point(3, 91),
                     Name = "lblNroDoc",
                     TabStop = false,
-                    Text = $"Nro Doc: {item.nro_doc ?? "-"}",
+                    Text = $"Nro. Documento Asignado: {item.nro_doc ?? "-"}",
                     TextFormat = BunifuLabel.TextFormattingOptions.Default
                 };
 
@@ -133,7 +133,7 @@ namespace FacturacionDigital_SIGECE.Controls
                     Location = new Point(3, 157),
                     Name = "lblNumeroControl",
                     TabStop = false,
-                    Text = $"N. Control: {item.NumeroControlAsignado ?? "-"}",
+                    Text = $"Nro. Control: {item.NumeroControlAsignado ?? "-"}",
                     TextFormat = BunifuLabel.TextFormattingOptions.Default
                 };
 

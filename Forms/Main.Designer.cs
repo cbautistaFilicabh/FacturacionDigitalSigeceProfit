@@ -37,6 +37,7 @@
             Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties3 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
             Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties4 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
             Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderEdges borderEdges1 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton2.BorderEdges();
+            Bunifu.UI.WinForms.BunifuButton.BunifuIconButton.BorderEdges borderEdges2 = new Bunifu.UI.WinForms.BunifuButton.BunifuIconButton.BorderEdges();
             dgvDocs = new Bunifu.UI.WinForms.BunifuDataGridView();
             viewLog = new DataGridViewImageColumn();
             topbar = new FlowLayoutPanel();
@@ -46,6 +47,7 @@
             dateStart = new Bunifu.UI.WinForms.BunifuDatePicker();
             dateEnd = new Bunifu.UI.WinForms.BunifuDatePicker();
             btnSend = new Bunifu.UI.WinForms.BunifuButton.BunifuButton2();
+            btnReloadData = new Bunifu.UI.WinForms.BunifuButton.BunifuIconButton();
             ((System.ComponentModel.ISupportInitialize)dgvDocs).BeginInit();
             topbar.SuspendLayout();
             SuspendLayout();
@@ -106,7 +108,7 @@
             dgvDocs.HeaderBackColor = Color.DodgerBlue;
             dgvDocs.HeaderBgColor = Color.Empty;
             dgvDocs.HeaderForeColor = Color.White;
-            dgvDocs.Location = new Point(16, 105);
+            dgvDocs.Location = new Point(16, 146);
             dgvDocs.MultiSelect = false;
             dgvDocs.Name = "dgvDocs";
             dgvDocs.ReadOnly = true;
@@ -116,7 +118,7 @@
             dgvDocs.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvDocs.ShowEditingIcon = false;
             dgvDocs.ShowRowErrors = false;
-            dgvDocs.Size = new Size(841, 412);
+            dgvDocs.Size = new Size(841, 371);
             dgvDocs.TabIndex = 0;
             dgvDocs.Theme = Bunifu.UI.WinForms.BunifuDataGridView.PresetThemes.Light;
             dgvDocs.CellClick += dgvDocs_CellClick;
@@ -140,12 +142,13 @@
             topbar.Controls.Add(dateStart);
             topbar.Controls.Add(dateEnd);
             topbar.Controls.Add(btnSend);
+            topbar.Controls.Add(btnReloadData);
             topbar.Dock = DockStyle.Top;
             topbar.Location = new Point(16, 16);
             topbar.Margin = new Padding(0);
             topbar.Name = "topbar";
             topbar.Padding = new Padding(4);
-            topbar.Size = new Size(841, 89);
+            topbar.Size = new Size(841, 130);
             topbar.TabIndex = 1;
             // 
             // lblTitle
@@ -240,6 +243,7 @@
             txtSearch.TextMarginTop = 1;
             txtSearch.TextPlaceholder = "Buscar...";
             txtSearch.UseSystemPasswordChar = false;
+            txtSearch.Visible = false;
             txtSearch.WordWrap = true;
             // 
             // cmbTypeDoc
@@ -439,6 +443,37 @@
             btnSend.UseDefaultRadiusAndThickness = true;
             btnSend.Click += btnSend_Click;
             // 
+            // btnReloadData
+            // 
+            btnReloadData.AllowAnimations = true;
+            btnReloadData.AllowBorderColorChanges = true;
+            btnReloadData.AllowMouseEffects = true;
+            btnReloadData.AnimationSpeed = 200;
+            btnReloadData.BackColor = Color.Transparent;
+            btnReloadData.BackgroundColor = Color.DodgerBlue;
+            btnReloadData.BorderColor = Color.DodgerBlue;
+            btnReloadData.BorderRadius = 1;
+            btnReloadData.BorderStyle = Bunifu.UI.WinForms.BunifuButton.BunifuIconButton.BorderStyles.Solid;
+            btnReloadData.BorderThickness = 1;
+            btnReloadData.ColorContrastOnClick = 30;
+            btnReloadData.ColorContrastOnHover = 30;
+            borderEdges2.BottomLeft = true;
+            borderEdges2.BottomRight = true;
+            borderEdges2.TopLeft = true;
+            borderEdges2.TopRight = true;
+            btnReloadData.CustomizableEdges = borderEdges2;
+            btnReloadData.DialogResult = DialogResult.None;
+            btnReloadData.Image = Properties.Resources.sync_50dp_FFFFFF_FILL0_wght400_GRAD0_opsz48;
+            btnReloadData.ImageMargin = new Padding(0);
+            btnReloadData.Location = new Point(7, 88);
+            btnReloadData.Name = "btnReloadData";
+            btnReloadData.RoundBorders = true;
+            btnReloadData.ShowBorders = true;
+            btnReloadData.Size = new Size(35, 35);
+            btnReloadData.Style = Bunifu.UI.WinForms.BunifuButton.BunifuIconButton.ButtonStyles.Round;
+            btnReloadData.TabIndex = 6;
+            btnReloadData.Click += btnReloadData_Click;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -471,5 +506,6 @@
         private Bunifu.UI.WinForms.BunifuButton.BunifuButton2 btnSend;
         private Bunifu.UI.WinForms.BunifuLabel lblTitle;
         private DataGridViewImageColumn viewLog;
+        private Bunifu.UI.WinForms.BunifuButton.BunifuIconButton btnReloadData;
     }
 }

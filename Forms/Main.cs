@@ -89,19 +89,6 @@ namespace FacturacionDigital_SIGECE.Forms
 
                 foreach (var doc in documentosSeleccionados)
                 {
-                    //if (doc.TipoDoc.ToLower() == "fact")
-                    //{
-                    //    var documentoProfit = _profitService.BuscarDocDigital(doc.TipoDoc,  doc.NroDoc);
-                    //    if (documentoProfit != null)
-                    //        docs.Add(documentoProfit);
-                    //}
-                    //else
-                    //{
-                    //    //var notaCredito = _profitService.BuscarNotaCreditoDigital(doc.NroDoc);
-                    //    //if (notaCredito != null)
-                    //    //    docs.Add(notaCredito);
-                    //}
-
                     var documentoProfit = _profitService.BuscarDocDigital(doc.TipoDoc, doc.NroDoc);
                     if (documentoProfit != null)
                         docs.Add(documentoProfit);
@@ -250,6 +237,11 @@ namespace FacturacionDigital_SIGECE.Forms
             dateStart.Value = DateTime.Now;
             dateEnd.Value = DateTime.Now;
 
+        }
+
+        private void btnReloadData_Click(object sender, EventArgs e)
+        {
+            SearchDocuments();
         }
     }
 }

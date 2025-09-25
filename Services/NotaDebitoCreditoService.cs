@@ -18,15 +18,16 @@ namespace FacturacionDigital_SIGECE.Services
             try
             {
                 //funcional solo cuando se procesa una única factura
-                var numberNota = dto.Select(f => f.nroNota);
-                var typeNota = dto.Select(f => f.tipo);
+                var numberNota = dto.First().nroNota;
+                var typeNota = dto.First().tipo.ToLowerInvariant() == "credito" ? "n/cr" : "n/db";
 
-                var url = "facturas/notas/masivanotas";
+                var url = "facturas/nota/masivanotas";
                 var result = await PostAsync<NotaDebitoCreditoResponseDto>(url, dto);
 
                 if (result != null)
                 {
-                    _profitService.RegistrarRespuestaApi(typeNota.ToString(), numberNota.ToString(), result);
+
+                    _profitService.RegistrarRespuestaApi(typeNota.ToUpper(), numberNota.ToString(), result);
 
                     return new ServiceResult<NotaDebitoCreditoResponseDto>
                     {
@@ -56,7 +57,7 @@ namespace FacturacionDigital_SIGECE.Services
                 return new ServiceResult<NotaDebitoCreditoResponseDto>
                 {
                     Success = false,
-                    Message = $"Error inesperado: {ex.Message}"
+                    Message = ex.Message
                 };
             }
         }

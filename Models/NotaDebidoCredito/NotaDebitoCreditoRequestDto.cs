@@ -9,7 +9,7 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
         public string rif { get; set; }
 
         [MaxLength(9)]
-        public int? codigoSucursal { get; set; }
+        public string? codigoSucursal { get; set; }
 
         [Required]
         [MaxLength(9)]
@@ -27,7 +27,7 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
 
         [Required]
         [MaxLength(1)]
-        public required int categoria { get; set; }
+        public required string categoria { get; set; }
 
         [Required]
         [MaxLength(99)]
@@ -39,7 +39,7 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
 
         [Required]
         [MaxLength(20)]
-        public required decimal subtotal { get; set; }
+        public required decimal subTotal { get; set; }
 
         [Required]
         [MaxLength(20)]
@@ -86,8 +86,9 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
         [MaxLength(10)]
         public string unidadMedida { get; set; }
 
+        [Required]
         [MaxLength(20)]
-        public decimal? cantidadOriginal { get; set; }
+        public required decimal cantidadDevolucion { get; set; }
 
         [Required]
         [MaxLength(20)]

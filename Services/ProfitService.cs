@@ -42,34 +42,34 @@ namespace FacturacionDigital_SIGECE.Services
                     //if (rd.Read())
                     //{
 
-                        while (rd.Read())
+                    while (rd.Read())
+                    {
+
+                        doc = new DocumentoDigitalProfit
                         {
 
-                            doc = new DocumentoDigitalProfit
-                            {
-
-                                TipoDoc = SafeGetHelper.SafeGet(rd, "TipoDoc", ""),
-                                NroDoc = SafeGetHelper.SafeGet(rd, "NroDoc", ""),
-                                FechaEmision = SafeGetHelper.SafeGet(rd, "FechaEmision", DateTime.Now),
-                                Rif = SafeGetHelper.SafeGet(rd, "Rif", ""),
-                                RazonSocial = SafeGetHelper.SafeGet(rd, "RazonSocial", ""),
-                                Moneda = SafeGetHelper.SafeGet(rd, "Moneda", "Bs"),
-                                Tasa = SafeGetHelper.SafeGet(rd, "Tasa", 1m),
-                                MontoBaseImponible = SafeGetHelper.SafeGet(rd, "MontoBaseImponible", 0m),
-                                MontoIva = SafeGetHelper.SafeGet(rd, "MontoIva", 0m),
-                                MontoTotalDocumento = SafeGetHelper.SafeGet(rd, "MontoTotalDocumento", 0m),
-                                Estado = SafeGetHelper.SafeGet(rd, "Estado", ""),
-                                // la fecha de envio puede venir nula, en caso de quiero inicializarla con una fecha por defecto 01/01/2000
-                                FechaEnvio = SafeGetHelper.SafeGet(rd, "FechaEnvio", new DateTime(2000, 1, 1)),
-                                ControlAsignado = SafeGetHelper.SafeGet(rd, "ControlAsignado", ""),
+                            TipoDoc = SafeGetHelper.SafeGet(rd, "TipoDoc", ""),
+                            NroDoc = SafeGetHelper.SafeGet(rd, "NroDoc", ""),
+                            FechaEmision = SafeGetHelper.SafeGet(rd, "FechaEmision", DateTime.Now),
+                            Rif = SafeGetHelper.SafeGet(rd, "Rif", ""),
+                            RazonSocial = SafeGetHelper.SafeGet(rd, "RazonSocial", ""),
+                            Moneda = SafeGetHelper.SafeGet(rd, "Moneda", "Bs"),
+                            Tasa = SafeGetHelper.SafeGet(rd, "Tasa", 1m),
+                            MontoBaseImponible = SafeGetHelper.SafeGet(rd, "MontoBaseImponible", 0m),
+                            MontoIva = SafeGetHelper.SafeGet(rd, "MontoIva", 0m),
+                            MontoTotalDocumento = SafeGetHelper.SafeGet(rd, "MontoTotalDocumento", 0m),
+                            Estado = SafeGetHelper.SafeGet(rd, "Estado", ""),
+                            // la fecha de envio puede venir nula, en caso de quiero inicializarla con una fecha por defecto 01/01/2000
+                            FechaEnvio = SafeGetHelper.SafeGet(rd, "FechaEnvio", new DateTime(2000, 1, 1)),
+                            ControlAsignado = SafeGetHelper.SafeGet(rd, "ControlAsignado", ""),
 
 
 
 
-                            };
-                            documentos.Add(doc);
-                        }
-                  // }
+                        };
+                        documentos.Add(doc);
+                    }
+                    // }
 
 
 
@@ -258,7 +258,7 @@ namespace FacturacionDigital_SIGECE.Services
                         var nroDoc = lista.FirstOrDefault()?.NroFactura ?? nro_doc;
                         registrarLog(nro_doc, tipo_doc, false, mensajeAgrupado ?? "", "", "");
 
-                         
+
                     }
                 }
             }
@@ -316,25 +316,22 @@ namespace FacturacionDigital_SIGECE.Services
                 cmd.ExecuteNonQuery();
                 using (var rd = cmd.ExecuteReader(CommandBehavior.CloseConnection))
                 {
-                    if (rd.Read())
+                    while (rd.Read())
                     {
-                        while (rd.Read())
+                        var estado = new EstadoDocumento
                         {
-                            var estado = new EstadoDocumento
-                            {
-                                Id = SafeGetHelper.SafeGet(rd, "Id", 0),
-                                Autorizado = SafeGetHelper.SafeGet(rd, "Autorizado", false),
-                                co_tipo_doc = SafeGetHelper.SafeGet(rd, "co_tipo_doc", "").Trim(),
-                                nro_doc = SafeGetHelper.SafeGet(rd, "nro_doc", "").Trim(),
-                                Serie = SafeGetHelper.SafeGet(rd, "Serie", "").Trim(),
-                                NumeroFacturaAsignado = SafeGetHelper.SafeGet(rd, "NumeroFacturaAsignado", "").Trim(),
-                                NumeroControlAsignado = SafeGetHelper.SafeGet(rd, "NumeroControlAsignado", "").Trim(),
-                                Comentarios = SafeGetHelper.SafeGet(rd, "Comentarios", "").Trim(),
-                                FechaAsignacion = SafeGetHelper.SafeGet(rd, "FechaAsignacion", (DateTime?)null),
-                                URLConsulta = SafeGetHelper.SafeGet(rd, "URLConsulta", "").Trim(),
-                            };
-                            estados.Add(estado);
-                        }
+                            Id = SafeGetHelper.SafeGet(rd, "Id", 0),
+                            Autorizado = SafeGetHelper.SafeGet(rd, "Autorizado", false),
+                            co_tipo_doc = SafeGetHelper.SafeGet(rd, "co_tipo_doc", "").Trim(),
+                            nro_doc = SafeGetHelper.SafeGet(rd, "nro_doc", "").Trim(),
+                            Serie = SafeGetHelper.SafeGet(rd, "Serie", "").Trim(),
+                            NumeroFacturaAsignado = SafeGetHelper.SafeGet(rd, "NumeroFacturaAsignado", "").Trim(),
+                            NumeroControlAsignado = SafeGetHelper.SafeGet(rd, "NumeroControlAsignado", "").Trim(),
+                            Comentarios = SafeGetHelper.SafeGet(rd, "Comentarios", "").Trim(),
+                            FechaAsignacion = SafeGetHelper.SafeGet(rd, "FechaAsignacion", (DateTime?)null),
+                            URLConsulta = SafeGetHelper.SafeGet(rd, "URLConsulta", "").Trim(),
+                        };
+                        estados.Add(estado);
                     }
                 }
 
