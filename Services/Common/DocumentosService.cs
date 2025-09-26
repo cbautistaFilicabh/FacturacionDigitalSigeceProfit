@@ -245,9 +245,9 @@ namespace FacturacionDigital_SIGECE.Services.Common
                                 descripcion = (detalle.DescripcionArticulo ?? "").Trim(),
                                 cantidad = detalle.Cantidad,
                                 unidadMedida = detalle.DescripcionUnidadDeMedida ?? "UNIDAD",
-                                cantidadDevolucion = detalle.Cantidad, //falta
+                                cantidadDevolucion = detalle.CantidadDevolucion ?? 0,
                                 precio = detalle.PrecioUnitario,
-                                precioOriginal = detalle.TotalRenglon, //falta
+                                precioOriginal = detalle.PrecioUnitarioOriginal,
                                 precioDevolucion = detalle.TotalRenglon,
                                 descuento = detalle.PorcDescuento,
                                 montoDescuento = detalle.MontoDescuento,
@@ -270,15 +270,15 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         nroNota = item.Encabezado.NroDoc ?? "",
                         tipo = item.Encabezado.TipoDoc.ToLowerInvariant() == "n/cr" ? "Credito" : "Debito",
                         serie = item.Encabezado.Serie ?? null,
-                        categoria = "2", // falta
-                        concepto = item.Encabezado.Descripcion ?? "",
+                        categoria = item.Encabezado.Categoria.ToString() ?? "0", // falta
+                        concepto = item.Encabezado.ComentarioGeneral ?? "",
                         importeTotal = item.Encabezado.TotalGeneral ?? 0,
                         subTotal = item.Encabezado.SubTotal ?? 0,
                         montoDescuento = item.Encabezado.MontoDescGlob ?? 0,
                         totalExento = item.Encabezado.MontoExentoTotal ?? 0,
                         totalExonerado = item.Encabezado.TotalExonerado,
                         tasaCambio = (item.Encabezado.CoMone ?? "").Trim() == "VEF" ? 1 : item.Encabezado.Tasa ?? 0,
-                        facturaDivisa = (item.Encabezado.CoMone ?? "").Trim(), //falta
+                        facturaDivisa = (item.Encabezado.CoMone ?? "").Trim(),
                         lstDetallesNota = detallesNota,
                         lstGravamenes = lstGravamen
                     };

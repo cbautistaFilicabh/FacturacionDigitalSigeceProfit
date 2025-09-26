@@ -53,7 +53,7 @@ namespace FacturacionDigital_SIGECE.Controls
                     TextFormat = BunifuLabel.TextFormattingOptions.Default,
                 };
 
-                BunifuLabel lblNumeroFactura = new()
+                BunifuLabel lblNumeroDocAsign = new()
                 {
                     AutoSize = true,
                     MaximumSize = new Size(panel.DisplayRectangle.Width, 0),
@@ -61,9 +61,9 @@ namespace FacturacionDigital_SIGECE.Controls
                     Font = new Font("Segoe UI", 11F),
                     ForeColor = Color.Black,
                     Location = new Point(3, 135),
-                    Name = "lblNumeroFactura",
+                    Name = "lblNumeroDocAsign",
                     TabStop = false,
-                    Text = $"N. Factura Asignado: {item.NumeroFacturaAsignado ?? "-"}",
+                    Text = $"Nro. Documento Asignado: {item.NumeroFacturaAsignado ?? "-"}",
                     TextFormat = BunifuLabel.TextFormattingOptions.Default
                 };
 
@@ -105,7 +105,7 @@ namespace FacturacionDigital_SIGECE.Controls
                     Location = new Point(3, 91),
                     Name = "lblNroDoc",
                     TabStop = false,
-                    Text = $"Nro. Documento Asignado: {item.nro_doc ?? "-"}",
+                    Text = $"Nro. Documento: {item.nro_doc ?? "-"}",
                     TextFormat = BunifuLabel.TextFormattingOptions.Default
                 };
 
@@ -182,7 +182,7 @@ namespace FacturacionDigital_SIGECE.Controls
 
                 if (item.Autorizado)
                 {
-                    panel.Controls.Add(lblNumeroFactura);
+                    panel.Controls.Add(lblNumeroDocAsign);
                     panel.Controls.Add(lblNumeroControl);
                 }
                 else
