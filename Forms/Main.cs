@@ -87,6 +87,10 @@ namespace FacturacionDigital_SIGECE.Forms
                     return;
                 }
 
+                using var loadingForm = new Loading();
+                loadingForm.Show(); // Mostrar de forma no modal
+                loadingForm.Refresh(); // Forzar refresco visual
+
                 foreach (var doc in documentosSeleccionados)
                 {
                     var documentoProfit = _profitService.BuscarDocDigital(doc.TipoDoc, doc.NroDoc);
@@ -98,6 +102,8 @@ namespace FacturacionDigital_SIGECE.Forms
 
                 DocumentosService documentos = new DocumentosService();
                 await documentos.CreateDocument(docs);
+
+                loadingForm.Close(); // Cerrar al terminar
             }
             catch (Exception ex)
             {
@@ -160,7 +166,8 @@ namespace FacturacionDigital_SIGECE.Forms
                 }
 
                 if (!string.IsNullOrEmpty(col.HeaderText))
-                    col.MinimumWidth = Math.Max(2, (col.HeaderText.Length * 10) + 15);
+                    //col.MinimumWidth = Math.Max(2, (col.HeaderText.Length * 10) + 15);
+                    col.MinimumWidth = 100;
                 else
                     col.MinimumWidth = 30; // or another sensible default
 

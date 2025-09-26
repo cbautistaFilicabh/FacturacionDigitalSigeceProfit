@@ -61,6 +61,7 @@
             dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 251, 255);
             dataGridViewCellStyle1.ForeColor = Color.Black;
             dgvDocs.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dgvDocs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDocs.BackgroundColor = Color.White;
             dgvDocs.BorderStyle = BorderStyle.None;
             dgvDocs.CellBorderStyle = DataGridViewCellBorderStyle.SingleVertical;
@@ -130,7 +131,6 @@
             viewLog.MinimumWidth = 30;
             viewLog.Name = "viewLog";
             viewLog.ReadOnly = true;
-            viewLog.Width = 30;
             // 
             // topbar
             // 
