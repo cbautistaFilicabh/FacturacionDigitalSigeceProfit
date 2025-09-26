@@ -137,6 +137,8 @@ namespace FacturacionDigital_SIGECE.Services
                             ColetillaIGTF = SafeGetHelper.SafeGet(rd, "ColetillaIGTF", false),
                             contribuyenteEspecial = SafeGetHelper.SafeGet(rd, "contribuyenteEspecial", false),
                             tipoPersona = SafeGetHelper.SafeGet(rd, "tipoPersona", "").Trim(),
+                            Categoria = SafeGetHelper.SafeGet(rd, "Categoria", 0),
+
                             // Vendedor / condición pago
                             CoVen = SafeGetHelper.SafeGet(rd, "CoVen", "").Trim(),
                             VenDes = SafeGetHelper.SafeGet(rd, "VenDes", "").Trim(),
@@ -192,6 +194,8 @@ namespace FacturacionDigital_SIGECE.Services
                             PrecioUnitario = SafeGetHelper.SafeGet(rd, "PrecioUnitario", 0m),
                             PorcIvaRenglon = SafeGetHelper.SafeGet(rd, "PorcIvaRenglon", 0m),
                             PorcDescuento = SafeGetHelper.SafeGet(rd, "PorcDescuento", 0m),
+                            CantidadDevolucion = SafeGetHelper.SafeGet(rd, "CantidadDevolucion", 0m),
+                            PrecioUnitarioOriginal = SafeGetHelper.SafeGet(rd, "PrecioUnitarioOriginal", 0m),
                         };
                         doc.Detalles.Add(det1);
 
@@ -213,6 +217,8 @@ namespace FacturacionDigital_SIGECE.Services
                                 PrecioUnitario = SafeGetHelper.SafeGet(rd, "PrecioUnitario", 0m),
                                 PorcIvaRenglon = SafeGetHelper.SafeGet(rd, "PorcIvaRenglon", 0m),
                                 PorcDescuento = SafeGetHelper.SafeGet(rd, "PorcDescuento", 0m),
+                                CantidadDevolucion = SafeGetHelper.SafeGet(rd, "CantidadDevolucion", 0m),
+                                PrecioUnitarioOriginal = SafeGetHelper.SafeGet(rd, "PrecioUnitarioOriginal", 0m),
                             };
                             doc.Detalles.Add(det);
 

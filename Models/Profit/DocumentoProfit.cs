@@ -51,6 +51,8 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public string? InfoAdicional8 { get; set; }
         public string? Descripcion { get; set; }
 
+        public int? Categoria { get; set; }
+
         public bool TipoColetilla { get; set; } = false;
 
         public bool ColetillaIGTF { get; set; } = false;
@@ -95,6 +97,7 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public DateTime? FechaFacturaAfectada { get; set; }
         public decimal? MontoFacturaAfectada { get; set; }
         public string? ComentarioFacturaAfectada { get; set; }
+
 
 
     }
@@ -146,6 +149,9 @@ namespace FacturacionDigital_SIGECE.Models.Profit
         public decimal PorcDescuento { get; set; }
         public decimal TotalRenglon { get; set; }
         public string? ComentarioRenglon { get; set; }
+        public decimal? PrecioUnitarioOriginal { get; set; }
+        public decimal? CantidadDevolucion { get; set; }
+        
 
 
         //   Decimales de cálculo (ajústalo a 2 o 5 según tu modelo)
