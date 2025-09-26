@@ -277,8 +277,8 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         montoDescuento = item.Encabezado.MontoDescGlob ?? 0,
                         totalExento = item.Encabezado.MontoExentoTotal ?? 0,
                         totalExonerado = item.Encabezado.TotalExonerado,
-                        tasaCambio = item.Encabezado.Tasa ?? 0,
-                        facturaDivisa = (item.Encabezado.CoMone ?? "").Trim(),
+                        tasaCambio = (item.Encabezado.CoMone ?? "").Trim() == "VEF" ? 1 : item.Encabezado.Tasa ?? 0,
+                        facturaDivisa = (item.Encabezado.CoMone ?? "").Trim(), //falta
                         lstDetallesNota = detallesNota,
                         lstGravamenes = lstGravamen
                     };
