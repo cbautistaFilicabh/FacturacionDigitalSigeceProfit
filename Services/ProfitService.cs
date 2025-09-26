@@ -49,7 +49,8 @@ namespace FacturacionDigital_SIGECE.Services
                         {
 
                             TipoDoc = SafeGetHelper.SafeGet(rd, "TipoDoc", ""),
-                            NroDoc = SafeGetHelper.SafeGet(rd, "NroDoc", ""),
+                            TipoDocAux = getTipoDocAux(SafeGetHelper.SafeGet(rd, "TipoDoc", "")),
+                            NroDoc = SafeGetHelper.SafeGet(rd, "NroDoc", "").Trim(),
                             FechaEmision = SafeGetHelper.SafeGet(rd, "FechaEmision", DateTime.Now),
                             Rif = SafeGetHelper.SafeGet(rd, "Rif", ""),
                             RazonSocial = SafeGetHelper.SafeGet(rd, "RazonSocial", ""),
@@ -65,7 +66,6 @@ namespace FacturacionDigital_SIGECE.Services
 
 
 
-
                         };
                         documentos.Add(doc);
                     }
@@ -74,6 +74,30 @@ namespace FacturacionDigital_SIGECE.Services
 
 
                 }
+            }
+
+            // metodo para obtener la descripción del tipo de documento
+            string getTipoDocAux(string tipoDoc)
+            {
+
+                switch (tipoDoc)
+                {
+                    case "FACT":
+                        tipoDoc = "Pedido";
+                        break;
+                    case "N/CR":
+                        tipoDoc = "Dev. Pedido";
+                        break;
+                    case "N/DB":
+                        tipoDoc = "NB Pedido";
+                        break;
+                    default:
+                        tipoDoc = "";
+                        break;
+                }
+
+                return tipoDoc;
+
             }
 
             return documentos;
@@ -231,7 +255,6 @@ namespace FacturacionDigital_SIGECE.Services
             }
         }
 
-
         public void RegistrarRespuestaApi(string tipo_doc, string nro_doc, object responseDto)
         {
 
@@ -346,7 +369,6 @@ namespace FacturacionDigital_SIGECE.Services
                 return estados;
             }
         }
-
 
         private void registrarLog(string nroDoc, string tipoDoc, bool autorizado, string? mensajeAgrupado, string nroDocAsignado, string? nroContolASignado)
         {

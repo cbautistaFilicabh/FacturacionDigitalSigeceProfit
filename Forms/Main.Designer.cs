@@ -61,11 +61,10 @@
             dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 251, 255);
             dataGridViewCellStyle1.ForeColor = Color.Black;
             dgvDocs.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            dgvDocs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
             dgvDocs.BackgroundColor = Color.White;
             dgvDocs.BorderStyle = BorderStyle.None;
-            dgvDocs.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dgvDocs.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvDocs.CellBorderStyle = DataGridViewCellBorderStyle.SingleVertical;
+            dgvDocs.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = Color.DodgerBlue;
             dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 11.75F, FontStyle.Bold);
@@ -112,6 +111,7 @@
             dgvDocs.MultiSelect = false;
             dgvDocs.Name = "dgvDocs";
             dgvDocs.ReadOnly = true;
+            dgvDocs.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dgvDocs.RowHeadersVisible = false;
             dgvDocs.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgvDocs.RowTemplate.Height = 40;
@@ -484,8 +484,9 @@
             Controls.Add(topbar);
             Name = "Main";
             Padding = new Padding(16);
+            ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Facturación Digital - SIGECE";
+            Text = "Calexpa | Facturación Digital";
             Load += Main_Load;
             Resize += Main_Resize;
             ((System.ComponentModel.ISupportInitialize)dgvDocs).EndInit();

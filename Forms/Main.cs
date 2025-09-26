@@ -28,9 +28,9 @@ namespace FacturacionDigital_SIGECE.Forms
         List<TypeDocument> Documents = new List<TypeDocument>
         {
             new TypeDocument { Code = "todos", Description = "Todos" },
-            new TypeDocument { Code = "fact", Description = "Factura" },
-            new TypeDocument { Code = "n/cr", Description = "Nota de Crédito" },
-            new TypeDocument { Code = "n/db", Description = "Nota de Débito" }
+            new TypeDocument { Code = "fact", Description = "Pedidos" },
+            new TypeDocument { Code = "n/cr", Description = "Devoluciones" },
+            new TypeDocument { Code = "n/db", Description = "NB Pedido" }
         };
 
         public Main()
@@ -65,10 +65,10 @@ namespace FacturacionDigital_SIGECE.Forms
                 return doc;
             }).ToList();
 
-            TableColumnsSize();
+            TableSettings();
         }
 
-        private void PrintDocument()
+        private async void PrintDocument()
         {
             try
             {
@@ -97,7 +97,7 @@ namespace FacturacionDigital_SIGECE.Forms
                 string tipoSeleccionado = tiposSeleccionados.First();
 
                 DocumentosService documentos = new DocumentosService();
-                documentos.CreateDocument(docs);
+                await documentos.CreateDocument(docs);
             }
             catch (Exception ex)
             {
@@ -105,16 +105,70 @@ namespace FacturacionDigital_SIGECE.Forms
             }
         }
 
-        private void TableColumnsSize()
+        private void TableSettings()
         {
+            dgvDocs.Columns["TipoDoc"].Visible = false;
+            dgvDocs.Columns["MontoBaseImponible"].Visible = false;
+            dgvDocs.Columns["MontoIva"].Visible = false;
+
+            dgvDocs.Columns["NroDoc"].HeaderText = "# Doc";
+            dgvDocs.Columns["TipoDocAux"].HeaderText = "Tipo Doc.";
+            dgvDocs.Columns["Estado"].HeaderText = "Estado";
+            dgvDocs.Columns["FechaEmision"].HeaderText = "Emision";
+            dgvDocs.Columns["ControlAsignado"].HeaderText = "# Control";
+            dgvDocs.Columns["FechaEnvio"].HeaderText = "Fecha Envío";
+            dgvDocs.Columns["Rif"].HeaderText = "RIF";
+            dgvDocs.Columns["RazonSocial"].HeaderText = "Razón Social";
+            dgvDocs.Columns["Moneda"].HeaderText = "Moneda";
+            dgvDocs.Columns["Tasa"].HeaderText = "Tasa Cambio";
+            dgvDocs.Columns["MontoTotalDocumento"].HeaderText = "Total Doc.";
+
+            dgvDocs.Columns["NroDoc"].Name = "NroDoc";
+            dgvDocs.Columns["TipoDocAux"].Name = "TipoDocAux";
+            dgvDocs.Columns["Estado"].Name = "Estado";
+            dgvDocs.Columns["FechaEmision"].Name = "FechaEmision";
+            dgvDocs.Columns["ControlAsignado"].Name = "ControlAsignado";
+            dgvDocs.Columns["FechaEnvio"].Name = "FechaEnvio";
+            dgvDocs.Columns["Rif"].Name = "Rif";
+            dgvDocs.Columns["RazonSocial"].Name = "RazonSocial";
+            dgvDocs.Columns["Moneda"].Name = "Moneda";
+            dgvDocs.Columns["Tasa"].Name = "Tasa";
+            dgvDocs.Columns["MontoTotalDocumento"].Name = "MontoTotalDocumento";
+
             int sum = 0;
             foreach (DataGridViewColumn col in dgvDocs.Columns)
             {
+                col.Resizable = DataGridViewTriState.True;
+
+                if (col.ValueType == typeof(int) ||
+                    col.ValueType == typeof(long) ||
+                    col.ValueType == typeof(float) ||
+                    col.ValueType == typeof(double) ||
+                    col.ValueType == typeof(decimal))
+                {
+                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    col.DefaultCellStyle.Format = "N2";
+                }
+                else
+                {
+                    if (col.Name == "NroDoc")
+                    {
+                        col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    }
+                    else
+                        col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                }
+
+                if (!string.IsNullOrEmpty(col.HeaderText))
+                    col.MinimumWidth = Math.Max(2, (col.HeaderText.Length * 10) + 15);
+                else
+                    col.MinimumWidth = 30; // or another sensible default
+
                 if (col.Visible)
                     sum += col.Width;
             }
 
-            dgvDocs.AutoSizeColumnsMode = sum > DisplayRectangle.Width - 20 ? DataGridViewAutoSizeColumnsMode.ColumnHeader : DataGridViewAutoSizeColumnsMode.Fill;
+            dgvDocs.AutoSizeColumnsMode = sum > DisplayRectangle.Width - 20 ? DataGridViewAutoSizeColumnsMode.None : DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void btnSend_Click(object sender, EventArgs e)
@@ -164,7 +218,7 @@ namespace FacturacionDigital_SIGECE.Forms
         private void Main_Resize(object sender, EventArgs e)
         {
             lblTitle.MinimumSize = new Size(topbar.DisplayRectangle.Width, 0);
-            TableColumnsSize();
+            TableSettings();
         }
 
         private void dateStart_ValueChanged(object sender, EventArgs e)
