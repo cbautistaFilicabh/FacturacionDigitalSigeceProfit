@@ -97,7 +97,9 @@ namespace FacturacionDigital_SIGECE.Forms
                 string tipoSeleccionado = tiposSeleccionados.First();
 
                 DocumentosService documentos = new DocumentosService();
-                documentos.CreateDocument(docs);
+                await documentos.CreateDocument(docs);
+                SearchDocuments();
+                loadingForm.Close(); // Cerrar al terminar
             }
             catch (Exception ex)
             {
@@ -110,6 +112,32 @@ namespace FacturacionDigital_SIGECE.Forms
             int sum = 0;
             foreach (DataGridViewColumn col in dgvDocs.Columns)
             {
+                col.Resizable = DataGridViewTriState.True;
+
+                if (col.ValueType == typeof(int) ||
+                    col.ValueType == typeof(long) ||
+                    col.ValueType == typeof(float) ||
+                    col.ValueType == typeof(double) ||
+                    col.ValueType == typeof(decimal))
+                {
+                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    col.DefaultCellStyle.Format = "N2";
+                }
+                else
+                {
+                    if (col.Name == "NroDoc")
+                    {
+                        col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    }
+                    else
+                        col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                }
+
+                if (!string.IsNullOrEmpty(col.HeaderText))
+                    col.MinimumWidth = (col.HeaderText.Length * 10) + 15;
+                else
+                    col.MinimumWidth = 30; // or another sensible default
+
                 if (col.Visible)
                     sum += col.Width;
             }

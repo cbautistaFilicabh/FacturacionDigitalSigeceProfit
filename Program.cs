@@ -38,6 +38,10 @@ namespace FacturacionDigital_SIGECE
                 var resultTask = _authService.LoginAsync(request);
                 resultTask.Wait();
                 var result = resultTask.Result;
+                if (!result.Success && result.Data == null)
+                {
+                    MessageBox.Show($"Error al iniciar sesión: {result.Message}", "Autenticación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }
