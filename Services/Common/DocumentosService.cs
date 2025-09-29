@@ -163,7 +163,9 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         tipoProveedor = item.Encabezado.tipoPersona != null ? item.Encabezado.tipoPersona.Trim() : "PJD"
                     };
 
-                    //Detalles de la factura
+                    //Descuentos de la factura
+                    decimal descuentoFactura = 0.0m;
+
                     var detalleFac = new List<DetalleFacturaDto>();
                     foreach (var detalle in item.Detalles)
                     {
@@ -180,12 +182,14 @@ namespace FacturacionDigital_SIGECE.Services.Common
                                 importe = detalle.PorcIvaRenglon == 0 ? detalle.ExentoRenglon : detalle.BaseImponibleRenglon,
                                 alicuotaGravamen = detalle.PorcIvaRenglon,
                                 montoGravamen = detalle.IvaMontoRenglon,
-                                montoDescuento = detalle.MontoDescuento,
+                                montoDescuento = Math.Abs(detalle.MontoDescuento),
                                 descuento = detalle.PorcDescuento,
                                 nrolote = detalle.nrolote, ///falta
                                 fechaVenciProducto = detalle.fechaVenciProducto.HasValue ? detalle.fechaVenciProducto.Value.ToString("yyyy-MM-dd") : null
                             }
                         );
+
+                        descuentoFactura += Math.Abs(detalle.MontoDescuento);
                     }
 
                     var lstGravamen = GravamenList(detalleFac);
@@ -199,7 +203,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         serie = string.IsNullOrWhiteSpace(item.Encabezado.Serie) ? null : item.Encabezado.Serie.Trim(),
                         serieNrofactura = string.IsNullOrWhiteSpace(item.Encabezado.Serie) ? null : item.Encabezado.Serie.Trim(),
                         subTotal = (item.Encabezado.SubTotal) ?? 0,
-                        montoDescuento = item.Encabezado.MontoDescGlob ?? 0,
+                        montoDescuento = descuentoFactura,
                         totalExento = item.Encabezado.MontoExentoTotal ?? 0,
                         totalExonerado = item.Encabezado.TotalExonerado,
                         condicionPago = (item.Encabezado.CondDes ?? "CONTADO").Trim(),

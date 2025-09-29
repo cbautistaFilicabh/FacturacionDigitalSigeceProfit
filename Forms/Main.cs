@@ -101,7 +101,8 @@ namespace FacturacionDigital_SIGECE.Forms
                 string tipoSeleccionado = tiposSeleccionados.First();
 
                 DocumentosService documentos = new DocumentosService();
-                documentos.CreateDocument(docs);
+                await documentos.CreateDocument(docs);
+                SearchDocuments();
             }
             catch (Exception ex)
             {
