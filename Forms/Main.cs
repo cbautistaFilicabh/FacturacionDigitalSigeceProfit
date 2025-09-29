@@ -101,9 +101,7 @@ namespace FacturacionDigital_SIGECE.Forms
                 string tipoSeleccionado = tiposSeleccionados.First();
 
                 DocumentosService documentos = new DocumentosService();
-                await documentos.CreateDocument(docs);
-
-                loadingForm.Close(); // Cerrar al terminar
+                documentos.CreateDocument(docs);
             }
             catch (Exception ex)
             {
@@ -166,8 +164,7 @@ namespace FacturacionDigital_SIGECE.Forms
                 }
 
                 if (!string.IsNullOrEmpty(col.HeaderText))
-                    //col.MinimumWidth = Math.Max(2, (col.HeaderText.Length * 10) + 15);
-                    col.MinimumWidth = 100;
+                    col.MinimumWidth = (col.HeaderText.Length * 10) + 15;
                 else
                     col.MinimumWidth = 30; // or another sensible default
 
