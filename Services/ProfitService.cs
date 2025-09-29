@@ -89,7 +89,7 @@ namespace FacturacionDigital_SIGECE.Services
                         tipoDoc = "Dev. Pedido";
                         break;
                     case "N/DB":
-                        tipoDoc = "NB Pedido";
+                        tipoDoc = "N/DB Pedido";
                         break;
                     default:
                         tipoDoc = "";

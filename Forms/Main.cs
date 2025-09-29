@@ -30,7 +30,7 @@ namespace FacturacionDigital_SIGECE.Forms
             new TypeDocument { Code = "todos", Description = "Todos" },
             new TypeDocument { Code = "fact", Description = "Pedidos" },
             new TypeDocument { Code = "n/cr", Description = "Devoluciones" },
-            new TypeDocument { Code = "n/db", Description = "NB Pedido" }
+            new TypeDocument { Code = "n/db", Description = "N/DB Pedido" }
         };
 
         public Main()
