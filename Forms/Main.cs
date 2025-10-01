@@ -209,7 +209,7 @@ namespace FacturacionDigital_SIGECE.Forms
                 MessageBoxIcon.Question
             );
 
-            if (result == DialogResult.OK)
+            if (result == DialogResult.Yes)
             {
                 PrintDocument();
             }
