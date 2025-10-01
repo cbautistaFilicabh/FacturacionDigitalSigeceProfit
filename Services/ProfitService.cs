@@ -391,7 +391,7 @@ namespace FacturacionDigital_SIGECE.Services
                 cmd.Parameters.AddWithValue("@nro_doc", nroDoc);
                 cmd.Parameters.AddWithValue("@numeroFacturaAsignado", nroDocAsignado);
                 cmd.Parameters.AddWithValue("@numeroControlAsignado", nroContolASignado);
-                cmd.Parameters.AddWithValue("@comentarios", mensajeAgrupado ?? "");
+                cmd.Parameters.AddWithValue("@comentarios", mensajeAgrupado.Replace("<", "(").Replace(">", ")") ?? "");
 
                 cn.Open();
                 cmd.ExecuteNonQuery();

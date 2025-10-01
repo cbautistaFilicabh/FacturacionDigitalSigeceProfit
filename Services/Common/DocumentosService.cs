@@ -165,6 +165,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
 
                     //Descuentos de la factura
                     decimal descuentoFactura = 0.0m;
+                    decimal totalFactura = 0;
 
                     var detalleFac = new List<DetalleFacturaDto>();
                     foreach (var detalle in item.Detalles)
@@ -190,6 +191,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         );
 
                         descuentoFactura += Math.Abs(detalle.MontoDescuento);
+                        totalFactura += detalle.TotalRenglon;
                     }
 
                     var lstGravamen = GravamenList(detalleFac);
@@ -198,12 +200,12 @@ namespace FacturacionDigital_SIGECE.Services.Common
                     {
                         rif = (item.Encabezado.RifEmisor ?? "").Trim(),
                         nroFactura = (item.Encabezado.NroDoc ?? "").Trim(),
-                        importeTotal = item.Encabezado.TotalGeneral ?? 0,
+                        importeTotal = totalFactura,//item.Encabezado.TotalGeneral ?? 0,
                         codigoSucursal = string.IsNullOrWhiteSpace(item.Encabezado.Sucursal) ? null : item.Encabezado.Sucursal.Trim(),
                         serie = string.IsNullOrWhiteSpace(item.Encabezado.Serie) ? null : item.Encabezado.Serie.Trim(),
                         serieNrofactura = string.IsNullOrWhiteSpace(item.Encabezado.Serie) ? null : item.Encabezado.Serie.Trim(),
                         subTotal = (item.Encabezado.SubTotal) ?? 0,
-                        montoDescuento = descuentoFactura,
+                        montoDescuento = item.Encabezado.MontoDescGlob ?? 0,
                         totalExento = item.Encabezado.MontoExentoTotal ?? 0,
                         totalExonerado = item.Encabezado.TotalExonerado,
                         condicionPago = (item.Encabezado.CondDes ?? "CONTADO").Trim(),
@@ -239,6 +241,9 @@ namespace FacturacionDigital_SIGECE.Services.Common
 
                 foreach (var item in profitItems)
                 {
+                    //Descuentos de la factura
+                    decimal descuentoNota = 0.0m;
+                    decimal totalNota = 0;
                     var detallesNota = new List<DetalleNota>();
                     foreach (var detalle in item.Detalles)
                     {
@@ -254,7 +259,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
                                 precioOriginal = detalle.PrecioUnitarioOriginal,
                                 precioDevolucion = detalle.TotalRenglon,
                                 descuento = detalle.PorcDescuento,
-                                montoDescuento = detalle.MontoDescuento,
+                                montoDescuento = Math.Abs(detalle.MontoDescuento),
                                 exento = detalle.PorcIvaRenglon == 0 ? true : false,
                                 exonerado = detalle.exonerado,
                                 importe = detalle.PorcIvaRenglon == 0 ? detalle.ExentoRenglon : detalle.BaseImponibleRenglon,
@@ -262,6 +267,8 @@ namespace FacturacionDigital_SIGECE.Services.Common
                                 montoGravamen = detalle.IvaMontoRenglon
                             }
                         );
+                        descuentoNota += Math.Abs(detalle.MontoDescuento);
+                        totalNota += detalle.TotalRenglon;
                     }
 
                     var lstGravamen = GravamenList(detallesNota);
@@ -276,9 +283,9 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         serie = item.Encabezado.Serie ?? null,
                         categoria = item.Encabezado.Categoria.ToString() ?? "0", // falta
                         concepto = item.Encabezado.ComentarioGeneral ?? "",
-                        importeTotal = item.Encabezado.TotalGeneral ?? 0,
+                        importeTotal = totalNota, //item.Encabezado.TotalGeneral ?? 0,
                         subTotal = item.Encabezado.SubTotal ?? 0,
-                        montoDescuento = item.Encabezado.MontoDescGlob ?? 0,
+                        montoDescuento = (descuentoNota + item.Encabezado.MontoDescGlob) ?? 0,
                         totalExento = item.Encabezado.MontoExentoTotal ?? 0,
                         totalExonerado = item.Encabezado.TotalExonerado,
                         tasaCambio = (item.Encabezado.CoMone ?? "").Trim() == "VEF" ? 1 : item.Encabezado.Tasa ?? 0,
