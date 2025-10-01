@@ -205,7 +205,7 @@ namespace FacturacionDigital_SIGECE.Forms
             var result = MessageBox.Show(
                 "¿Está seguro que desea imprimir el documento: " + string.Join(", ", numberdocs),
                 "Atención",
-                MessageBoxButtons.OKCancel,
+                MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question
             );
 
