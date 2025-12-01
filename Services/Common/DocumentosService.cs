@@ -229,7 +229,8 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         cliente = client,
                         lstDetallesFacturaGeneral = detalleFac,
                         lstPagos = null,
-                        lstGravamenes = lstGravamen
+                        lstGravamenes = lstGravamen,
+                        ordendecompra = item.Encabezado.OrdenDeCompra != null ? item.Encabezado.OrdenDeCompra.Trim() : null
                     };
 
                     newDto.Add((T)(object)facturaDto);

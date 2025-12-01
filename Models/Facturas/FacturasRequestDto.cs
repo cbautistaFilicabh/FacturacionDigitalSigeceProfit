@@ -109,6 +109,8 @@ namespace FacturacionDigital_SIGECE.Models.Facturas
         public List<PagoDto>? lstPagos { get; set; }
 
         public List<GravamenDto>? lstGravamenes { get; set; }
+
+        public string? ordendecompra { get; set; }
     }
 
     public class ClienteDto

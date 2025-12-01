@@ -1,4 +1,5 @@
-﻿using FacturacionDigital_SIGECE.AppUtilities;
+﻿using FacturacionDigital_KatanaPanama.Class;
+using FacturacionDigital_SIGECE.AppUtilities;
 using FacturacionDigital_SIGECE.Models.Facturas;
 using FacturacionDigital_SIGECE.Models.NotaDebidoCredito;
 using FacturacionDigital_SIGECE.Services.Common;
@@ -9,6 +10,7 @@ namespace FacturacionDigital_SIGECE.Services
     public class NotaDebitoCreditoService : ApiService
     {
         ProfitService _profitService = new ProfitService();
+        private string nota;
         public NotaDebitoCreditoService() : base(AppConfig.SessionToken)
         {
         }
@@ -20,12 +22,26 @@ namespace FacturacionDigital_SIGECE.Services
                 //funcional solo cuando se procesa una única factura
                 var numberNota = dto.First().nroNota;
                 var typeNota = dto.First().tipo.ToLowerInvariant() == "credito" ? "n/cr" : "n/db";
+                nota = typeNota;
 
                 var url = "facturas/nota/masivanotas";
                 var result = await PostAsync<NotaDebitoCreditoResponseDto>(url, dto);
 
+                string requestJson = System.Text.Json.JsonSerializer.Serialize(dto, new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+
                 if (result != null)
                 {
+
+                    string responseJson = System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    });
+
+
+                    ApiLogger.LogRequestAndResponse(url, requestJson, responseJson, $"{typeNota}_{numberNota}");
 
                     _profitService.RegistrarRespuestaApi(typeNota.ToUpper(), numberNota.ToString(), result);
 
@@ -46,6 +62,14 @@ namespace FacturacionDigital_SIGECE.Services
             }
             catch (ApiException ex)
             {
+                string requestJson = System.Text.Json.JsonSerializer.Serialize(dto, new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+
+                // También puedes registrar el error
+                ApiLogger.LogRequestAndResponse("facturacion", requestJson, $"Error API: {ex.StatusCode} - {ex.Message}", nota);
+
                 return new ServiceResult<NotaDebitoCreditoResponseDto>
                 {
                     Success = false,
@@ -54,6 +78,14 @@ namespace FacturacionDigital_SIGECE.Services
             }
             catch (Exception ex)
             {
+                string requestJson = System.Text.Json.JsonSerializer.Serialize(dto, new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+
+                // También puedes registrar el error
+                ApiLogger.LogRequestAndResponse("facturacion", requestJson, $"Error inesperado: {ex.Message}", nota);
+
                 return new ServiceResult<NotaDebitoCreditoResponseDto>
                 {
                     Success = false,
