@@ -1,4 +1,5 @@
 ﻿using Azure;
+using FacturacionDigital_SIGECE.Helpers;
 using FacturacionDigital_SIGECE.Models;
 using FacturacionDigital_SIGECE.Models.Facturas;
 using FacturacionDigital_SIGECE.Models.NotaDebidoCredito;
@@ -33,7 +34,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
 
                     var responseFact = await _facturaService.CreateAsync(listDataFact);
 
-                    if (responseFact.Success && responseFact.Data != null)
+                    if (responseFact.Data != null)
                     {
                         var msg = new StringBuilder();
 
@@ -196,6 +197,19 @@ namespace FacturacionDigital_SIGECE.Services.Common
 
                     var lstGravamen = GravamenList(detalleFac);
 
+                    string? observacionfact = "";
+
+                    if (!string.IsNullOrWhiteSpace(item.Encabezado.InfoAdicional1))
+                    {
+                        observacionfact = (item.Encabezado.InfoAdicional1 != null ? item.Encabezado.InfoAdicional1.Trim() : "");
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(item.Encabezado.InfoAdicional2))
+                    {
+                        observacionfact = observacionfact + "/n" + (item.Encabezado.InfoAdicional2 != null ? item.Encabezado.InfoAdicional2.Trim() : "");
+                    }
+
+
                     facturaDto = new FacturasRequestDto
                     {
                         rif = (item.Encabezado.RifEmisor ?? "").Trim(),
@@ -212,26 +226,32 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         facturaDivisa = (item.Encabezado.CoMone ?? "").Trim(),
                         cambioDivisa = 1,
                         tipoCambioDiaUsd = item.Encabezado.Tasa ?? 0,
-                        tipoColetilla = item.Encabezado.TipoColetilla, //falta
+                        tipoColetilla = item.Encabezado.TipoColetilla,
                         tipoVenta = "INTERNA",
                         diasCredito = item.Encabezado.DiasCredito,
                         fechaVenciFactura = item.Encabezado.FecVenc != null ? item.Encabezado.FecVenc.Value.ToString("yyyy-MM-dd").Trim() : null,
-                        //estatusCredito = ,
                         fechaVencimiento = item.Encabezado.FecVenc != null ? item.Encabezado.FecVenc.Value.ToString("yyyy-MM-dd").Trim() : null,
-                        modeloFactura = "GENERAL", ///falta
+                        modeloFactura = "GENERAL",
                         pagueAntes = null,
                         cuentaTerceros = false,
                         rifPrestador = (item.Encabezado.Rif ?? "").Trim(),
                         coletillaIGTF = true,
                         nroContrato = null,
-                        observacion = item.Encabezado.ComentarioGeneral != null ? item.Encabezado.ComentarioGeneral.Trim() : null,
+                        observacion = (observacionfact != "" ? observacionfact + "/n" : null) + (item.Encabezado.ComentarioGeneral != null ? item.Encabezado.ComentarioGeneral.Trim() : null),
                         observacionInfo = item.Encabezado.Descripcion != null ? item.Encabezado.Descripcion.Trim() : null,
+                        ordenCompra = null,
                         cliente = client,
                         lstDetallesFacturaGeneral = detalleFac,
                         lstPagos = null,
-                        lstGravamenes = lstGravamen,
-                        ordendecompra = item.Encabezado.OrdenDeCompra != null ? item.Encabezado.OrdenDeCompra.Trim() : null
+                        lstGravamenes = lstGravamen
                     };
+
+                    if (item.Encabezado.InfoAdicional3 != "" && item.Encabezado.InfoAdicional3 != null)
+                    {
+                        facturaDto.ordenCompra = item.Encabezado.InfoAdicional3!.Trim() ?? null;
+                    }
+
+                    //ObjectCleaner.Clean(facturaDto);
 
                     newDto.Add((T)(object)facturaDto);
                 }

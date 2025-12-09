@@ -13,13 +13,26 @@ namespace FacturacionDigital_SIGECE.Services
         {
         }
 
-        public async Task<ServiceResult<FacturasResponseDto>> CreateAsync(List<FacturasRequestDto> dto, string tipoDoc)
+        public async Task<ServiceResult<FacturasResponseDto>> CreateAsync(List<FacturasRequestDto> dto)
         {
             try
             {
                 //funcional solo cuando se procesa una única factura
 
-                string numberFact = dto.First().nroFactura;
+                string numberFacts = "";
+
+                foreach (var fact in dto)
+                {
+                    if (numberFacts == "")
+                    {
+                        numberFacts = fact.nroFactura;
+                    }
+                    else
+                    {
+                        numberFacts += $"_{fact.nroFactura}";
+                    }
+                }
+
                 var url = "facturas/masivafacturacion";
                 var result = await PostAsync<FacturasResponseDto>(url, dto);
 
@@ -37,12 +50,12 @@ namespace FacturacionDigital_SIGECE.Services
                     });
 
 
-                    ApiLogger.LogRequestAndResponse(url, requestJson, responseJson, $"{tipoDoc}_{numberFact}");
+                    ApiLogger.LogRequestAndResponse(url, requestJson, responseJson, $"FACT_{numberFacts}");
 
+                    _profitService.RegistrarRespuestaApi("FACT", numberFacts, result);
 
-                    if (result != null)
+                    if (result.DetalleErrorFacturas == null)
                     {
-                        _profitService.RegistrarRespuestaApi("FACT", numberFact.ToString(), result);
                         return new ServiceResult<FacturasResponseDto>
                         {
                             Success = true,
@@ -51,13 +64,33 @@ namespace FacturacionDigital_SIGECE.Services
                     }
                     else
                     {
+                        var errorMessages = new List<string>();
+                        foreach (var errorList in result.DetalleErrorFacturas)
+                        {
+                            foreach (var error in errorList)
+                            {
+                                errorMessages.Add($"{error.NroFactura}: {error.Msg} /n");
+                            }
+                        }
+
                         return new ServiceResult<FacturasResponseDto>
                         {
                             Success = false,
-                            Message = "No se recibió respuesta del servidor."
+                            Message = "Errores al procesar las facturas. /N Detalles:" + errorMessages,
+                            Data = result
                         };
                     }
+
                 }
+                else
+                {
+                    return new ServiceResult<FacturasResponseDto>
+                    {
+                        Success = false,
+                        Message = "No se recibió respuesta del servidor."
+                    };
+                }
+            }
             catch (ApiException ex)
             {
                 string requestJson = System.Text.Json.JsonSerializer.Serialize(dto, new System.Text.Json.JsonSerializerOptions
@@ -66,7 +99,7 @@ namespace FacturacionDigital_SIGECE.Services
                 });
 
                 // También puedes registrar el error
-                ApiLogger.LogRequestAndResponse("facturas", requestJson, $"Error API: {ex.StatusCode} - {ex.Message}", tipoDoc);
+                ApiLogger.LogRequestAndResponse("facturas", requestJson, $"Error API: {ex.StatusCode} - {ex.Message}", "FACT");
 
 
                 return new ServiceResult<FacturasResponseDto>
@@ -82,7 +115,7 @@ namespace FacturacionDigital_SIGECE.Services
                     WriteIndented = true
                 });
 
-                ApiLogger.LogRequestAndResponse("facturas", requestJson, $"Error inesperado: {ex.Message}", tipoDoc);
+                ApiLogger.LogRequestAndResponse("facturas", requestJson, $"Error inesperado: {ex.Message}", "FACT");
 
 
                 return new ServiceResult<FacturasResponseDto>
