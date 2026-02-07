@@ -52,20 +52,19 @@ namespace FacturacionDigital_SIGECE.Forms
         private void SearchDocuments()
         {
             var selectedValue = cmbTypeDoc.SelectedValue;
-            string? tipoDoc = selectedValue?.ToString() ?? null;
+            string? tipoDoc = selectedValue?.ToString();
 
             DateTime dDesde = dateStart.Value;
             DateTime dHasta = dateEnd.Value;
 
             var result = _profitService.BuscarDocumentosDigitales(tipoDoc, dDesde, dHasta);
 
+            dgvDocs.AutoGenerateColumns = true;
             dgvDocs.DataSource = result.Select(doc =>
             {
                 doc.Estado = bool.TryParse(doc.Estado, out bool estadoBool) ? (estadoBool ? "Procesado" : "Sin procesar") : doc.Estado;
                 return doc;
             }).ToList();
-
-            TableSettings();
         }
 
         private async void PrintDocument()
@@ -301,6 +300,12 @@ namespace FacturacionDigital_SIGECE.Forms
         private void btnReloadData_Click(object sender, EventArgs e)
         {
             SearchDocuments();
+        }
+
+        private void dgvDocs_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            if (!dgvDocs.IsHandleCreated) return;
+            TableSettings();
         }
     }
 }

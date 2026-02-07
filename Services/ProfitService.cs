@@ -304,7 +304,7 @@ namespace FacturacionDigital_SIGECE.Services
 
                             foreach (var detalle in lista)
                             {
-                                registrarLog(nro_doc, tipo_doc, true, null, detalle.nroNota ?? "", detalle.nroControl);
+                                registrarLog(nro_doc, tipo_doc, true, detalle.Msg, detalle.nroNota ?? "", detalle.nroControl);
                             }
                         }
                     }
@@ -391,7 +391,7 @@ namespace FacturacionDigital_SIGECE.Services
                 cmd.Parameters.AddWithValue("@nro_doc", nroDoc);
                 cmd.Parameters.AddWithValue("@numeroFacturaAsignado", nroDocAsignado);
                 cmd.Parameters.AddWithValue("@numeroControlAsignado", nroContolASignado);
-                cmd.Parameters.AddWithValue("@comentarios", mensajeAgrupado.Replace("<", "(").Replace(">", ")") ?? "");
+                cmd.Parameters.AddWithValue("@comentarios", (mensajeAgrupado ?? "").Replace("<", "(").Replace(">", ")")); 
 
                 cn.Open();
                 cmd.ExecuteNonQuery();
