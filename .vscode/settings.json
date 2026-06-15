@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^Select-String -Path \"Forms/Main\\.cs\" -Pattern 'Columns\\\\\\[\"TipoDoc\"\\\\\\]\\\\\\.Visible = false','Columns\\\\\\[\"MontoBaseImponible\"\\\\\\]\\\\\\.Visible = false','Columns\\\\\\[\"MontoIva\"\\\\\\]\\\\\\.Visible = false','MinimumWidth = \\\\\\(col\\\\\\.HeaderText\\\\\\.Length \\\\\\* 10\\\\\\) \\\\\\+ 15','foreach \\\\\\(DataGridViewColumn col in dgvDocs\\\\\\.Columns\\\\\\)' \\| ForEach-Object \\{ \"\\{0\\}:\\{1\\}:\\{2\\}\" -f \\$_\\.Path\\.Replace\\(\\(Get-Location\\)\\.Path \\+ \"\\\\\\\\\",\"\"\\), \\$_\\.LineNumber, \\$_\\.Line\\.Trim\\(\\) \\}$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

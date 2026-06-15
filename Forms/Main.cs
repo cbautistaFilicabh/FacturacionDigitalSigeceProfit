@@ -28,9 +28,12 @@ namespace FacturacionDigital_SIGECE.Forms
         List<TypeDocument> Documents = new List<TypeDocument>
         {
             new TypeDocument { Code = "todos", Description = "Todos" },
-            new TypeDocument { Code = "fact", Description = "Pedidos" },
-            new TypeDocument { Code = "n/cr", Description = "Devoluciones" },
-            new TypeDocument { Code = "n/db", Description = "N/DB Pedido" }
+            new TypeDocument { Code = "fact", Description = AppConfig.versionProfit2k8 ? "Pedidos" : "Factura" },
+            new TypeDocument { Code = "n/cr", Description = AppConfig.versionProfit2k8 ? "Devoluciones" : "N/CR" },
+            new TypeDocument { Code = "n/db", Description = AppConfig.versionProfit2k8 ? "N/DB de Pedidos" : "N/DB" },
+            new TypeDocument { Code = "riva", Description = "Ret. IVA"},
+            new TypeDocument { Code = "islr", Description = "Ret. ISLR"}
+
         };
 
         public Main()
@@ -111,6 +114,9 @@ namespace FacturacionDigital_SIGECE.Forms
 
         private void TableSettings()
         {
+            if (dgvDocs.Columns.Count == 0)
+                return;
+
             dgvDocs.Columns["TipoDoc"].Visible = false;
             dgvDocs.Columns["MontoBaseImponible"].Visible = false;
             dgvDocs.Columns["MontoIva"].Visible = false;
@@ -139,7 +145,6 @@ namespace FacturacionDigital_SIGECE.Forms
             dgvDocs.Columns["Tasa"].Name = "Tasa";
             dgvDocs.Columns["MontoTotalDocumento"].Name = "MontoTotalDocumento";
 
-            int sum = 0;
             foreach (DataGridViewColumn col in dgvDocs.Columns)
             {
                 col.Resizable = DataGridViewTriState.True;
@@ -162,17 +167,70 @@ namespace FacturacionDigital_SIGECE.Forms
                     else
                         col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
                 }
-
-                if (!string.IsNullOrEmpty(col.HeaderText))
-                    col.MinimumWidth = (col.HeaderText.Length * 10) + 15;
-                else
-                    col.MinimumWidth = 30; // or another sensible default
-
-                if (col.Visible)
-                    sum += col.Width;
             }
 
-            dgvDocs.AutoSizeColumnsMode = sum > DisplayRectangle.Width - 20 ? DataGridViewAutoSizeColumnsMode.None : DataGridViewAutoSizeColumnsMode.Fill;
+            ApplyStableColumnLayout();
+        }
+
+        private void ApplyStableColumnLayout()
+        {
+            dgvDocs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgvDocs.ScrollBars = ScrollBars.Both;
+
+            SetFixedColumnWidth("viewLog", 34);
+            SetFixedColumnWidth("NroDoc", 110);
+            SetFixedColumnWidth("TipoDocAux", 110);
+            SetFixedColumnWidth("Estado", 120);
+            SetFixedColumnWidth("FechaEmision", 110);
+            SetFixedColumnWidth("ControlAsignado", 110);
+            SetFixedColumnWidth("FechaEnvio", 110);
+            SetFixedColumnWidth("Rif", 130);
+            SetFixedColumnWidth("Moneda", 80);
+            SetFixedColumnWidth("Tasa", 105);
+            SetFixedColumnWidth("MontoTotalDocumento", 130);
+
+            var razonSocial = GetVisibleColumn("RazonSocial");
+            if (razonSocial == null)
+                return;
+
+            int fixedWidth = 0;
+            foreach (DataGridViewColumn col in dgvDocs.Columns)
+            {
+                if (!col.Visible || col.Name == "RazonSocial")
+                    continue;
+
+                fixedWidth += col.Width;
+            }
+
+            int availableWidth = dgvDocs.ClientSize.Width - fixedWidth - 24;
+            int targetWidth = Math.Max(220, availableWidth);
+
+            razonSocial.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            razonSocial.MinimumWidth = 220;
+            razonSocial.Width = targetWidth;
+        }
+
+        private DataGridViewColumn? GetVisibleColumn(string name)
+        {
+            if (!dgvDocs.Columns.Contains(name))
+                return null;
+
+            var column = dgvDocs.Columns[name];
+            if (column == null)
+                return null;
+
+            return column.Visible ? column : null;
+        }
+
+        private void SetFixedColumnWidth(string name, int width)
+        {
+            var column = GetVisibleColumn(name);
+            if (column == null)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = width;
+            column.Width = width;
         }
 
         private void btnSend_Click(object sender, EventArgs e)
@@ -233,6 +291,40 @@ namespace FacturacionDigital_SIGECE.Forms
         private void dateEnd_ValueChanged(object sender, EventArgs e)
         {
             SearchDocuments();
+        }
+
+        private void dgvDocs_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
+
+            var column = dgvDocs.Columns[e.ColumnIndex];
+            if (column.Name != "Estado")
+                return;
+
+            string estado = e.Value?.ToString()?.Trim() ?? string.Empty;
+
+            e.CellStyle.SelectionForeColor = Color.White;
+
+            if (estado.Equals("Procesado", StringComparison.OrdinalIgnoreCase))
+            {
+                e.CellStyle.BackColor = Color.FromArgb(223, 240, 216);
+                e.CellStyle.ForeColor = Color.FromArgb(47, 111, 58);
+                e.CellStyle.SelectionBackColor = Color.FromArgb(76, 175, 80);
+                return;
+            }
+
+            if (estado.Equals("Sin procesar", StringComparison.OrdinalIgnoreCase))
+            {
+                e.CellStyle.BackColor = Color.FromArgb(255, 243, 205);
+                e.CellStyle.ForeColor = Color.FromArgb(133, 100, 4);
+                e.CellStyle.SelectionBackColor = Color.FromArgb(255, 193, 7);
+                return;
+            }
+
+            e.CellStyle.BackColor = Color.FromArgb(233, 236, 239);
+            e.CellStyle.ForeColor = Color.FromArgb(73, 80, 87);
+            e.CellStyle.SelectionBackColor = Color.FromArgb(108, 117, 125);
         }
 
         private void dgvDocs_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)

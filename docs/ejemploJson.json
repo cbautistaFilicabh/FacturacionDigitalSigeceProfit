@@ -1,0 +1,58 @@
+[
+  {
+    "rif": "J-316353737",
+    "periodoFiscalDel": "2025-06-16",
+    "periodoFiscalAl": "2025-06-30",
+    "rifProveedor": "J-333333333",
+    "identificacion": "JSON RET IVA+ISLR",
+    "direccion": "AV LIBERTADOR EDIF MULTICENTRO EMPRESARIAL DEL ESTE, TORRE LIBERTADOR, NUCLEO B PISO 13 OF 132-B URB CHACAO CARACAS (CHACAO) MIRANDA ZONA POSTAL 1060",
+    "correo": "soporte@procert.net.ve",
+    "modeloRetencion": "IVA",
+    "tipoDocumento": "05",
+    "lstRetenciones": [
+      {
+        "tipoTransaccion": "01-REG",
+        "fechaDocumento": "2025-04-25",
+        "nroDocumento": "1765898",
+        "nroNota": "",
+        "nroControlDocumento": "00-00168441",
+        "montoTotalDocumento": "34764.32",
+        "baseImponible": "29969.24",
+        "Alicuota": 16,
+        "impuestoCausado": "4795.08",
+        "impuestoRetenido": "3596.31",
+        "compraExento": "0.0",
+        "nroDocumentoAfectado": ""
+      }
+    ]
+  },
+  {
+    "rif": "J-316353737",
+    "periodoFiscalDel": "2025-06-16",
+    "periodoFiscalAl": "2025-06-30",
+    "rifProveedor": "J-333333333",
+    "identificacion": "JSON RET IVA",
+    "direccion": "AV LIBERTADOR EDIF MULTICENTRO EMPRESARIAL DEL ESTE, TORRE LIBERTADOR, NUCLEO B PISO 13 OF 132-B URB CHACAO CARACAS (CHACAO) MIRANDA ZONA POSTAL 1060",
+    "correo": "soporte@procert.net.ve",
+    "modeloRetencion": "ISLR",
+    "tipoDocumento": "06",
+    "lstRetenciones": [
+      {
+        "tipoTransaccion": "01-REG",
+        "fechaDocumento": "2025-04-25",
+        "nroDocumento": "1765898",
+        "nroNota": "",
+        "nroControlDocumento": "00-00168441",
+        "montoTotalDocumento": "34764.32",
+        "baseImponible": "29969.24",
+        "Alicuota": 16,
+        "impuestoCausado": "4795.08",
+        "impuestoRetenido": "3596.31",
+        "compraExento": "0.0",
+        "nroDocumentoAfectado": "",
+        "conceptoIslr": "55",
+        "causadoRetenido": "599.38"
+      }
+    ]
+  }
+]

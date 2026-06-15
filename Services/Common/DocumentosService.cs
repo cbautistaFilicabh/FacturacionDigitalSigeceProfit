@@ -40,7 +40,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
 
                         if (responseFact.Data.DetalleFacturaProcesadas?.Any() == true)
                         {
-                            msg.AppendLine("Pedidos procesados correctamente:");
+                            msg.AppendLine("Facturas procesadas correctamente:");
 
                             var facturasProcesadas = responseFact.Data.DetalleFacturaProcesadas
                                 .SelectMany(list => list) // aplanar la lista de listas
@@ -59,7 +59,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
 
                             var facturasUnicas = facturasError.GroupBy(e => e.NroFactura).Select(g => g.First()).ToList();
 
-                            msg.AppendLine("Pedidos no procesadas:" + string.Join(", ", facturasUnicas.Select(e => e.NroFactura)));
+                            msg.AppendLine("Facturas no procesadas:" + string.Join(", ", facturasUnicas.Select(e => e.NroFactura)));
 
                             msg.AppendLine();
                             msg.AppendLine($"Total de errores: {facturasError.Count}");

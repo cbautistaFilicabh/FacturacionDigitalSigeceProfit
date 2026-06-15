@@ -83,13 +83,19 @@ namespace FacturacionDigital_SIGECE.Services
                 switch (tipoDoc)
                 {
                     case "FACT":
-                        tipoDoc = "Pedido";
+                        tipoDoc = AppConfig.versionProfit2k8 ? "Pedido" : "Factura";
                         break;
                     case "N/CR":
-                        tipoDoc = "Dev. Pedido";
+                        tipoDoc = AppConfig.versionProfit2k8 ? "Devolución" : "N/CR";
                         break;
                     case "N/DB":
-                        tipoDoc = "N/DB Pedido";
+                        tipoDoc = AppConfig.versionProfit2k8 ? "N/DB de Pedidos" : "N/DB";
+                        break;
+                    case "RIVA":
+                        tipoDoc =  "Ret. IVA";
+                        break;
+                    case "ISLR":
+                        tipoDoc = "Ret. ISLR";
                         break;
                     default:
                         tipoDoc = "";

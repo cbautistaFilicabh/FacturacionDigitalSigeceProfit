@@ -123,6 +123,8 @@
             dgvDocs.TabIndex = 0;
             dgvDocs.Theme = Bunifu.UI.WinForms.BunifuDataGridView.PresetThemes.Light;
             dgvDocs.CellClick += dgvDocs_CellClick;
+            dgvDocs.CellFormatting += dgvDocs_CellFormatting;
+            dgvDocs.DataBindingComplete += dgvDocs_DataBindingComplete;
             dgvDocs.CellPainting += dgvDocs_CellPainting;
             // 
             // viewLog
