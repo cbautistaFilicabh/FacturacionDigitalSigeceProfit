@@ -31,8 +31,8 @@ namespace FacturacionDigital_SIGECE.Forms
             new TypeDocument { Code = "fact", Description = AppConfig.versionProfit2k8 ? "Pedidos" : "Factura" },
             new TypeDocument { Code = "n/cr", Description = AppConfig.versionProfit2k8 ? "Devoluciones" : "N/CR" },
             new TypeDocument { Code = "n/db", Description = AppConfig.versionProfit2k8 ? "N/DB de Pedidos" : "N/DB" },
-            new TypeDocument { Code = "ivan", Description = "Ret. IVA"},
-            new TypeDocument { Code = "ivap", Description = "Ret. IVA"},
+            new TypeDocument { Code = "ivan", Description = "Ret. IVA a Fact."},
+            new TypeDocument { Code = "ivap", Description = "Ret. IVA a N/CR"},
             new TypeDocument { Code = "islr", Description = "Ret. ISLR"}
 
         };

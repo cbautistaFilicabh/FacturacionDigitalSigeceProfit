@@ -93,10 +93,10 @@ namespace FacturacionDigital_SIGECE.Services
                         tipoDoc = AppConfig.versionProfit2k8 ? "N/DB de Pedidos" : "N/DB";
                         break;
                     case "IVAN":
-                            tipoDoc =  "Ret. IVA";
+                            tipoDoc =  "Ret. IVA a Factura";
                         break;
                     case "IVAP":
-                            tipoDoc =  "Ret. IVA";
+                            tipoDoc =  "Ret. IVA a N/CR";
                         break;
                     case "ISLR":
                         tipoDoc = "Ret. ISLR";
