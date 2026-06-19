@@ -4,6 +4,7 @@ using FacturacionDigital_SIGECE.Models;
 using FacturacionDigital_SIGECE.Models.Facturas;
 using FacturacionDigital_SIGECE.Models.NotaDebidoCredito;
 using FacturacionDigital_SIGECE.Models.Profit;
+using FacturacionDigital_SIGECE.Models.Retenciones;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -405,6 +406,154 @@ namespace FacturacionDigital_SIGECE.Services.Common
             {
                 throw new ApplicationException("Ocurrió un error al generar la lista de gravámenes.", ex);
             }
+        }
+
+        /// <summary>
+        /// Procesa un lote de comprobantes de retención (IVA o ISLR) y los envía a la API.
+        /// Cada lista interior representa las filas del SP para un comprobante.
+        /// </summary>
+        public async Task CreateRetenciones(List<List<RetencionProfit>> data, string tipoDoc)
+        {
+            if (!data.Any(g => g.Count > 0))
+            {
+                MessageBox.Show("No se encontraron datos de retención para los documentos seleccionados.",
+                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var _retencionService = new RetencionService();
+            var listDto = MapRetencioneToApi(data, tipoDoc);
+
+            var response = await _retencionService.CreateAsync(listDto);
+
+            if (response.Data != null)
+            {
+                var msg = new StringBuilder();
+
+                if (response.Data.DetalleretencionesProcesadas?.Any() == true)
+                {
+                    msg.AppendLine("Retenciones procesadas correctamente:");
+                    foreach (var proc in response.Data.DetalleretencionesProcesadas)
+                    {
+                        msg.AppendLine($" Comprobante: {proc.nroComprobante} | N. Control: {proc.NroControlComprobante}");
+                    }
+                    msg.AppendLine();
+                }
+
+                if (response.Data.TotalRetencionIvaconError > 0)
+                {
+                    msg.AppendLine("Retenciones con error:");
+                    foreach (var err in response.Data.DetalleErrorRetencionesIva)
+                    {
+                        if (!string.IsNullOrWhiteSpace(err.msg))
+                            msg.AppendLine($" - {err.msg}");
+                    }
+                    msg.AppendLine();
+                    msg.AppendLine($"Total errores: {response.Data.TotalRetencionIvaconError}");
+                    msg.AppendLine("Revisa el histórico para más detalles.");
+                }
+
+                MessageBox.Show(msg.ToString(), "Resultado Retenciones", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show($"Error al enviar retenciones: {response.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private List<RetencionRequestDto> MapRetencioneToApi(List<List<RetencionProfit>> data, string tipoDoc)
+        {
+            bool esIslr = tipoDoc.ToUpperInvariant() == "ISLR";
+            string modeloRetencion = esIslr ? "ISLR" : "IVA";
+            var result = new List<RetencionRequestDto>();
+
+            foreach (var filas in data)
+            {
+                if (!filas.Any()) continue;
+
+                var first = filas.First();
+
+                var (del, al) = CalcularPeriodoFiscal(
+                    first.FechaEmision, first.mesfiscal, first.annofiscal, first.esContribuyente, esIslr);
+
+                string rifProveedor = string.IsNullOrWhiteSpace(first.tipoRifProv)
+                    ? first.RifProv
+                    : $"{first.tipoRifProv}-{first.RifProv}";
+                //string rifProveedor = first.RifProv;
+                // Para IVA la tasaRetencion se determina a nivel de comprobante (todos los ítems comparten la misma lógica)
+                string tasaRetencionGrupo = esIslr ? "" : (filas.Any(f => f.Impuesto > 0 && f.MontoRetenido < f.Impuesto) ? "75" : "100");
+
+                var items = filas.Select(fila => new RetencionItemDto
+                {
+                    tipoTransaccion      = esIslr ? "01-REG" : fila.CodigoOperacion,
+                    fechaDocumento       = fila.FechaDocumento.ToString("yyyy-MM-dd"),
+                    nroDocumento         = fila.NumeroFactura,
+                    nroNota              = ObtenerNroNota(fila, esIslr),
+                    nroControlDocumento  = fila.NumeroControl,
+                    montoTotalDocumento  = fila.Total.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                    baseImponible        = fila.Base.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                    alicuota             = esIslr ? null : (int?)fila.alicuota,
+                    impuestoCausado      = fila.Impuesto.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                    impuestoRetenido     = fila.MontoRetenido.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                    compraExento         = fila.Exento.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                    nroDocumentoAfectado = fila.Relacionado,
+                    conceptoIslr         = esIslr ? fila.CodigoOperacion : null,
+                    causadoRetenido      = esIslr ? fila.MontoRetenido.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) : null,
+                }).ToList();
+
+                result.Add(new RetencionRequestDto
+                {
+                    NroDocProfit     = first.NroDoc,
+                    TipoDocProfit    = first.TipoDoc,
+                    rif              = first.RifEmisor,
+                    periodoFiscalDel = del,
+                    periodoFiscalAl  = al,
+                    rifProveedor     = rifProveedor,
+                    identificacion   = first.NombreProv,
+                    direccion        = first.DireccionProv,
+                    correo           = first.EmailProv,
+                    modeloRetencion  = modeloRetencion,
+                    tipoDocumento    = first.TipoComprobante,
+                    tasaRetencion    = tasaRetencionGrupo,
+                    lstRetenciones   = items,
+                });
+            }
+
+            return result;
+        }
+
+        private static (string del, string al) CalcularPeriodoFiscal(
+            DateTime fechaEmision, int mes, int año, bool esContribuyente, bool esIslr = false)
+        {
+            int lastDay = DateTime.DaysInMonth(año, mes);
+
+            // ISLR siempre usa el mes completo (1 al último día)
+            if (esIslr)
+                return ($"{año}-{mes:00}-01", $"{año}-{mes:00}-{lastDay:00}");
+
+            if (esContribuyente)
+            {
+                if (fechaEmision.Day <= 15)
+                    return ($"{año}-{mes:00}-01", $"{año}-{mes:00}-15");
+                else
+                    return ($"{año}-{mes:00}-16", $"{año}-{mes:00}-{lastDay:00}");
+            }
+            else
+            {
+                return ($"{año}-{mes:00}-01", $"{año}-{mes:00}-{lastDay:00}");
+            }
+        }
+
+        private static string ObtenerNroNota(RetencionProfit fila, bool esIslr)
+        {
+            if (esIslr) return "";
+            return fila.CodigoOperacion switch
+            {
+                "02-AJUSNC" => fila.NumeroCredito,
+                "03-AJUSND" => fila.NumeroDebito,
+                _           => "",
+            };
         }
     }
 }

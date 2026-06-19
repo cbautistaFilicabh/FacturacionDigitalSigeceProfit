@@ -10,6 +10,7 @@ using FacturacionDigital_SIGECE.Helpers;
 using FacturacionDigital_SIGECE.Models.Facturas;
 using FacturacionDigital_SIGECE.Models.NotaDebidoCredito;
 using FacturacionDigital_SIGECE.Models.Profit;
+using FacturacionDigital_SIGECE.Models.Retenciones;
 using Microsoft.Data.SqlClient;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
@@ -91,8 +92,11 @@ namespace FacturacionDigital_SIGECE.Services
                     case "N/DB":
                         tipoDoc = AppConfig.versionProfit2k8 ? "N/DB de Pedidos" : "N/DB";
                         break;
-                    case "RIVA":
-                        tipoDoc =  "Ret. IVA";
+                    case "IVAN":
+                            tipoDoc =  "Ret. IVA";
+                        break;
+                    case "IVAP":
+                            tipoDoc =  "Ret. IVA";
                         break;
                     case "ISLR":
                         tipoDoc = "Ret. ISLR";
@@ -261,6 +265,76 @@ namespace FacturacionDigital_SIGECE.Services
             }
         }
 
+        public List<RetencionProfit> BuscarRetencion(string tipo_doc, string nro_doc)
+        {
+            var connectionString = AppConfig.CadenaConexion;
+            var retenciones = new List<RetencionProfit>();
+
+            string spName = tipo_doc.ToUpperInvariant() != "ISLR"
+                ? "sfConsultarDocumentosRetencionIva"
+                : "sfConsultarDocumentosRetencionISLR";
+
+            using (var cn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(spName, cn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@nro_doc", nro_doc);
+
+                if (tipo_doc.ToUpperInvariant() != "ISLR")
+                {
+                    cmd.Parameters.AddWithValue("@tipo_doc", tipo_doc.ToUpperInvariant());
+                }
+                cmd.CommandTimeout = 30000;
+                cn.Open();
+
+                using (var rd = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    while (rd.Read())
+                    {
+                        var fila = new RetencionProfit
+                        {
+                            RifEmisor            = SafeGetHelper.SafeGet(rd, "RifEmisor", "").Trim(),
+                            NombreProv           = SafeGetHelper.SafeGet(rd, "NombreProv", "").Trim(),
+                            RifProv              = SafeGetHelper.SafeGet(rd, "RifProv", "").Trim(),
+                            TipoDoc                = SafeGetHelper.SafeGet(rd, "TipoDoc", "").Trim(),
+                            NroDoc                 = SafeGetHelper.SafeGet(rd, "NroDoc", "").Trim(),
+
+                            tipoRifProv          = SafeGetHelper.SafeGet(rd, "tipoRifProv", "").Trim(),
+                            NumeroComprobante    = SafeGetHelper.SafeGet(rd, "NumeroComprobante", "").Trim(),
+                            EmailProv            = SafeGetHelper.SafeGet(rd, "EmailProv", "").Trim(),
+                            DireccionProv        = SafeGetHelper.SafeGet(rd, "DireccionProv", "").Trim(),
+                            TelefonoProv         = SafeGetHelper.SafeGet(rd, "TelefonoProv", "").Trim(),
+                            TipoComprobante      = SafeGetHelper.SafeGet(rd, "TipoComprobante", "").Trim(),
+                            FechaEmision         = SafeGetHelper.SafeGet(rd, "FechaEmision", DateTime.Now),
+                            FechaEntrega         = SafeGetHelper.SafeGet(rd, "FechaEntrega", (DateTime?)null),
+                            mesfiscal            = SafeGetHelper.SafeGet(rd, "mesfiscal", 1),
+                            annofiscal           = SafeGetHelper.SafeGet(rd, "annofiscal", DateTime.Now.Year),
+                            esContribuyente      = SafeGetHelper.SafeGet(rd, "esContribuyente", false),
+                            CodigoOperacion      = SafeGetHelper.SafeGet(rd, "CodigoOperacion", "").Trim(),
+                            DescripcionOperacion = SafeGetHelper.SafeGet(rd, "DescripcionOperacion", "").Trim(),
+                            NumeroControl        = SafeGetHelper.SafeGet(rd, "NumeroControl", "").Trim(),
+                            NumeroFactura        = SafeGetHelper.SafeGet(rd, "NumeroFactura", "").Trim(),
+                            NumeroCredito        = SafeGetHelper.SafeGet(rd, "NumeroCredito", "").Trim(),
+                            NumeroDebito         = SafeGetHelper.SafeGet(rd, "NumeroDebito", "").Trim(),
+                            Relacionado          = SafeGetHelper.SafeGet(rd, "Relacionado", "").Trim(),
+                            FechaDocumento       = SafeGetHelper.SafeGet(rd, "FechaDocumento", DateTime.Now),
+                            Exento               = SafeGetHelper.SafeGet(rd, "Exento", 0m),
+                            Base                 = SafeGetHelper.SafeGet(rd, "Base", 0m),
+                            Impuesto             = SafeGetHelper.SafeGet(rd, "Impuesto", 0m),
+                            sustraendopn         = SafeGetHelper.SafeGet(rd, "sustraendopn", (decimal?)null),
+                            alicuota             = SafeGetHelper.SafeGet(rd, "alicuota", 0m),
+                            PorcentajeRetenido   = SafeGetHelper.SafeGet(rd, "PorcentajeRetenido", 0m),
+                            MontoRetenido        = SafeGetHelper.SafeGet(rd, "MontoRetenido", 0m),
+                            Total                = SafeGetHelper.SafeGet(rd, "Total", 0m),
+                        };
+                        retenciones.Add(fila);
+                    }
+                }
+            }
+
+            return retenciones;
+        }
+
         public void RegistrarRespuestaApi(string tipo_doc, string nro_doc, object responseDto)
         {
 
@@ -329,14 +403,35 @@ namespace FacturacionDigital_SIGECE.Services
                         }
                     }
                 }
-            }
-        }
+            }            else if (responseDto is RetencionResponseDto retDto)
+            {
+                if (retDto.DetalleretencionesProcesadas?.Count > 0)
+                {
+                    foreach (var detalle in retDto.DetalleretencionesProcesadas)
+                    {
+                        registrarLog(nro_doc, tipo_doc, true, detalle.msg ?? "",
+                            detalle.nroComprobante ?? "",
+                            detalle.NroControlComprobante ?? "");
+                    }
+                }
+
+                if (retDto.DetalleErrorRetencionesIva?.Count > 0)
+                {
+                    var mensajeAgrupado = string.Join(Environment.NewLine,
+                        retDto.DetalleErrorRetencionesIva
+                            .Select(e => e.msg)
+                            .Where(m => !string.IsNullOrEmpty(m))
+                            .Select(m => $"- {m}"));
+
+                    registrarLog(nro_doc, tipo_doc, false, mensajeAgrupado, "", "");
+                }
+            }        }
 
         public List<EstadoDocumento> ListarEstadoDocumento(string tipo_doc, string nro_doc)
         {
 
             List<EstadoDocumento> estados = new List<EstadoDocumento>();
-            //consultar la base de datos y llenar la lista de estados
+            //consultar la base de datos y llenar la lista de estados   
             var connectionString = AppConfig.CadenaConexion;
             using (var cn = new SqlConnection(connectionString))
             using (var cmd = new SqlCommand())

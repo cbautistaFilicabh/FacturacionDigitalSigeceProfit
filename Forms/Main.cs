@@ -31,7 +31,8 @@ namespace FacturacionDigital_SIGECE.Forms
             new TypeDocument { Code = "fact", Description = AppConfig.versionProfit2k8 ? "Pedidos" : "Factura" },
             new TypeDocument { Code = "n/cr", Description = AppConfig.versionProfit2k8 ? "Devoluciones" : "N/CR" },
             new TypeDocument { Code = "n/db", Description = AppConfig.versionProfit2k8 ? "N/DB de Pedidos" : "N/DB" },
-            new TypeDocument { Code = "riva", Description = "Ret. IVA"},
+            new TypeDocument { Code = "ivan", Description = "Ret. IVA"},
+            new TypeDocument { Code = "ivap", Description = "Ret. IVA"},
             new TypeDocument { Code = "islr", Description = "Ret. ISLR"}
 
         };
@@ -74,8 +75,37 @@ namespace FacturacionDigital_SIGECE.Forms
         {
             try
             {
-                var docs = new List<DocumentoProfit>();
                 var documentosSeleccionados = DocumentosHelper.GetSelectedDocs(dgvDocs);
+
+                // Filtrar documentos ya procesados
+                var procesados = documentosSeleccionados
+                    .Where(d =>
+                    {
+                        var row = dgvDocs.SelectedRows
+                            .Cast<DataGridViewRow>()
+                            .FirstOrDefault(r => r.Cells["NroDoc"].Value?.ToString() == d.NroDoc
+                                              && r.Cells["TipoDoc"].Value?.ToString() == d.TipoDoc);
+                        return row?.Cells["Estado"].Value?.ToString() == "Procesado";
+                    })
+                    .ToList();
+
+                if (procesados.Count == documentosSeleccionados.Count)
+                {
+                    MessageBox.Show("Los documentos seleccionados ya fueron procesados.",
+                        "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (procesados.Count > 0)
+                {
+                    var nros = string.Join(", ", procesados.Select(d => d.NroDoc));
+                    MessageBox.Show($"Los siguientes documentos ya fueron procesados y serán omitidos:\n{nros}",
+                        "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                documentosSeleccionados = documentosSeleccionados
+                    .Except(procesados)
+                    .ToList();
 
                 var tiposSeleccionados = documentosSeleccionados
                     .Select(d => d.TipoDoc)
@@ -89,21 +119,39 @@ namespace FacturacionDigital_SIGECE.Forms
                     return;
                 }
 
-                using var loadingForm = new Loading();
-                loadingForm.Show(); // Mostrar de forma no modal
-                loadingForm.Refresh(); // Forzar refresco visual
-
-                foreach (var doc in documentosSeleccionados)
-                {
-                    var documentoProfit = _profitService.BuscarDocDigital(doc.TipoDoc, doc.NroDoc);
-                    if (documentoProfit != null)
-                        docs.Add(documentoProfit);
-                }
-
                 string tipoSeleccionado = tiposSeleccionados.First();
 
+                using var loadingForm = new Loading();
+                loadingForm.Show();
+                loadingForm.Refresh();
+
                 DocumentosService documentos = new DocumentosService();
-                await documentos.CreateDocument(docs);
+
+                if (tipoSeleccionado.ToUpperInvariant() is "IVAN" or "IVAP" or "ISLR")
+                {
+                    // ── Retenciones IVA / ISLR ──────────────────────────────────
+                    var retenciones = new List<List<Models.Profit.RetencionProfit>>();
+                    foreach (var doc in documentosSeleccionados)
+                    {
+                        var filas = _profitService.BuscarRetencion(doc.TipoDoc, doc.NroDoc);
+                        if (filas?.Count > 0)
+                            retenciones.Add(filas);
+                    }
+                    await documentos.CreateRetenciones(retenciones, tipoSeleccionado);
+                }
+                else
+                {
+                    // ── Facturas / Notas de Débito / Notas de Crédito ───────────
+                    var docs = new List<Models.Profit.DocumentoProfit>();
+                    foreach (var doc in documentosSeleccionados)
+                    {
+                        var documentoProfit = _profitService.BuscarDocDigital(doc.TipoDoc, doc.NroDoc);
+                        if (documentoProfit != null)
+                            docs.Add(documentoProfit);
+                    }
+                    await documentos.CreateDocument(docs);
+                }
+
                 SearchDocuments();
             }
             catch (Exception ex)

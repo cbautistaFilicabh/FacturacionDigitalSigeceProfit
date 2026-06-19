@@ -14,7 +14,8 @@ namespace FacturacionDigital_SIGECE.AppUtilities
         public static string CadenaConexion = ConfigurationManager.ConnectionStrings["Connection String"].ConnectionString;
         public static DateTime TokenExpiration { get; set; } = DateTime.MinValue;
         public static bool ApiLoggingEnabled = bool.TryParse(ConfigurationManager.AppSettings["ApiLoggingEnabled"], out bool enabled);
-        public static string ApiLogDirectory = (ConfigurationManager.AppSettings["ApiLogDirectory"] ?? @"C:\ApiLogs\").Trim();
+        public static string ApiLogDirectory = Directory.CreateDirectory(
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs")).FullName;
         public static bool versionProfit2k8 = bool.TryParse(ConfigurationManager.AppSettings["versionProfit2k8"], out bool enabled);
 
     }
