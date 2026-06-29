@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace FacturacionDigital_SIGECE.Models.Facturas
 {
@@ -17,12 +18,20 @@ namespace FacturacionDigital_SIGECE.Models.Facturas
         public required decimal importeTotal { get; set; }
 
         [MaxLength(16)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+
         public string? codigoSucursal { get; set; }
 
         [MaxLength(2)]
+           [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+
         public string? serie { get; set; }
 
         [MaxLength(2)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public string? serieNrofactura { get; set; }
 
         [Required]

@@ -302,7 +302,7 @@ namespace FacturacionDigital_SIGECE.Services.Common
                         nroFactura = item.Encabezado.NumeroFacturaAfectada ?? "",
                         nroNota = item.Encabezado.NroDoc ?? "",
                         tipo = item.Encabezado.TipoDoc.ToLowerInvariant() == "n/cr" ? "Credito" : "Debito",
-                        serie = item.Encabezado.Serie ?? null,
+                        serie = string.IsNullOrWhiteSpace(item.Encabezado.Serie) ? null : item.Encabezado.Serie.Trim(),
                         categoria = item.Encabezado.Categoria.ToString() ?? "0", // falta
                         concepto = item.Encabezado.ComentarioGeneral ?? "",
                         importeTotal = totalNota, //item.Encabezado.TotalGeneral ?? 0,

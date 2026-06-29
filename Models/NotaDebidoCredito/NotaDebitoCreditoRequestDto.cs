@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
 {
@@ -9,6 +10,8 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
         public string rif { get; set; }
 
         [MaxLength(9)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public string? codigoSucursal { get; set; }
 
         [Required]
@@ -23,6 +26,8 @@ namespace FacturacionDigital_SIGECE.Models.NotaDebidoCredito
         public required string tipo { get; set; }
 
         [MaxLength(2)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public string? serie { get; set; }
 
         [Required]
